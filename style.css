@@ -1,0 +1,363 @@
+/* style.css */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  font-family: Verdana, Arial, sans-serif;
+}
+
+body {
+  background: #edf4ef;
+  color: #222;
+}
+
+/* TOPO */
+
+.top-header {
+  background: #2458d3;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 14px 20px;
+
+  color: white;
+}
+
+.logo {
+  height: 65px;
+}
+
+.search-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-area input {
+  width: 220px;
+  height: 30px;
+
+  border: 1px solid #888;
+  padding: 5px;
+}
+
+.search-area button {
+  background: #ff9d2f;
+  border: none;
+
+  padding: 7px 14px;
+
+  color: white;
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+.header-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* MENU */
+
+.navbar {
+  background: #ffffff;
+
+  border-bottom: 3px solid #70b67c;
+
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+
+  padding: 12px 18px;
+}
+
+.navbar a {
+  text-decoration: none;
+
+  color: #2c5e45;
+  font-weight: bold;
+}
+
+/* LAYOUT */
+
+.main-layout {
+  width: 95%;
+  margin: 20px auto;
+
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+/* BANNER */
+
+.welcome-banner {
+  background: linear-gradient(to right, #83d0ae, #7fc5ff);
+
+  padding: 25px;
+
+  border-radius: 12px;
+
+  color: white;
+
+  margin-bottom: 20px;
+}
+
+.welcome-banner h1 {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.welcome-banner p {
+  font-size: 18px;
+}
+
+/* BOXES */
+
+.box,
+.login-panel,
+.side-box {
+  background: white;
+
+  border: 1px solid #c9d7cb;
+
+  margin-bottom: 20px;
+}
+
+.box-title {
+  padding: 12px;
+
+  font-size: 22px;
+  font-weight: bold;
+
+  color: white;
+}
+
+.green {
+  background: #57b36d;
+}
+
+.orange {
+  background: #ff9d2f;
+}
+
+.purple {
+  background: #8666d6;
+}
+
+/* USERS */
+
+.new-users {
+  display: flex;
+  justify-content: space-around;
+
+  padding: 20px;
+}
+
+.user {
+  text-align: center;
+}
+
+.avatar {
+  width: 90px;
+  height: 90px;
+
+  background: linear-gradient(to bottom, #d9d9d9, #bfbfbf);
+
+  border-radius: 10px;
+
+  margin-bottom: 10px;
+}
+
+/* POSTS */
+
+.post {
+  padding: 20px;
+
+  border-top: 1px solid #ddd;
+}
+
+.post h3 {
+  margin-bottom: 10px;
+
+  color: #2b5fb5;
+}
+
+.post a {
+  text-decoration: none;
+
+  color: #ff7e00;
+  font-weight: bold;
+}
+
+/* COMUNIDADES */
+
+.community-list {
+  padding: 15px;
+}
+
+.community {
+  background: #f3f8f4;
+
+  border: 1px solid #d4e5d8;
+
+  padding: 12px;
+
+  margin-bottom: 10px;
+}
+
+/* LOGIN */
+
+.login-top {
+  background: linear-gradient(to right, #70b67c, #7fc5ff);
+
+  color: white;
+
+  text-align: center;
+
+  padding: 20px;
+}
+
+.login-logo {
+  width: 180px;
+
+  margin-bottom: 10px;
+}
+
+.login-box {
+  padding: 20px;
+}
+
+.login-box h2 {
+  text-align: center;
+
+  color: #2c5e45;
+
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 100%;
+  height: 32px;
+
+  border: 1px solid #999;
+
+  padding: 5px;
+}
+
+.remember {
+  margin-bottom: 15px;
+}
+
+.login-button,
+.register-button {
+  width: 100%;
+
+  border: none;
+
+  padding: 10px;
+
+  color: white;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  margin-bottom: 10px;
+}
+
+.login-button {
+  background: #57b36d;
+}
+
+.register-button {
+  background: #ff9d2f;
+}
+
+.forgot {
+  display: block;
+
+  text-align: right;
+
+  text-decoration: none;
+
+  color: #2b5fb5;
+}
+
+/* SIDE */
+
+.side-box {
+  padding: 20px;
+}
+
+.side-box h3 {
+  color: #8666d6;
+
+  margin-bottom: 10px;
+}
+
+/* FOOTER */
+
+footer {
+  width: 95%;
+
+  margin: auto auto 20px auto;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.footer-card {
+  background: #d8eadf;
+
+  border: 1px solid #bad1c2;
+
+  text-align: center;
+
+  padding: 15px;
+
+  font-weight: bold;
+
+  color: #2c5e45;
+}
+
+/* RESPONSIVO */
+
+@media (max-width: 900px) {
+
+  .main-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .top-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .new-users {
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
