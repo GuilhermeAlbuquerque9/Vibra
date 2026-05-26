@@ -1036,3 +1036,44 @@ searchButton.addEventListener(
   }
 
 );
+
+// ========================================
+// SOM
+// ========================================
+
+const clickSound =
+  document.getElementById(
+    "clickSound"
+  );
+
+function playClick() {
+
+  clickSound.currentTime = 0;
+  clickSound.play();
+
+}
+
+// ========================================
+// SOM EM TODOS OS BOTÕES
+// ========================================
+
+document.addEventListener(
+
+  "click",
+
+  (event) => {
+
+    if(
+
+      event.target.tagName ===
+      "BUTTON"
+
+    ) {
+
+      playClick();
+
+    }
+
+  }
+
+);
