@@ -11,7 +11,7 @@
   >
 
   <title>
-    Vibra™
+    Vibra™ — Onde você pode se expressar.™
   </title>
 
   <!-- ÍCONE -->
@@ -19,7 +19,7 @@
   <link
     rel="icon"
     type="image/png"
-    href="assets\Vibra_icon.png"
+    href="Vibra_icon.png"
   >
 
   <!-- CSS -->
@@ -40,12 +40,14 @@
     <div class="logo-area">
 
       <img
-        src="assets\Vibra_logo.png"
-        alt="Vibra logo"
+        src="Vibra_logo.png"
+        alt="Vibra Logo"
         class="logo"
       >
 
     </div>
+
+    <!-- PESQUISA -->
 
     <div class="search-area">
 
@@ -64,6 +66,8 @@
       </button>
 
     </div>
+
+    <!-- LINKS -->
 
     <div class="header-links">
 
@@ -148,7 +152,7 @@
 
       </div>
 
-      <!-- POSTS -->
+      <!-- FEED -->
 
       <div class="box">
 
@@ -190,19 +194,7 @@
         <div id="communityContainer">
 
           <div class="community">
-            💻 Fãs do Windows XP
-          </div>
-
-          <div class="community">
-            🎮 Jogos retrô
-          </div>
-
-          <div class="community">
-            📺 Internet antiga
-          </div>
-
-          <div class="community">
-            🎵 Música dos anos 2000
+            Carregando comunidades...
           </div>
 
         </div>
@@ -222,13 +214,13 @@
         <div class="login-top">
 
           <img
-            src="assets\Vibra_logo.png"
-            alt="Vibra logo"
+            src="Vibra_logo.png"
+            alt="Vibra Logo"
             class="login-logo"
           >
 
           <p>
-            Onde você pode se expressar.™
+            a rede social retrô
           </p>
 
         </div>
@@ -238,6 +230,24 @@
           <h2>
             Entrar
           </h2>
+
+          <!-- USERNAME -->
+
+          <div class="form-group">
+
+            <label>
+              Nome de usuário:
+            </label>
+
+            <input
+              type="text"
+              id="username"
+              placeholder="Seu nome de usuário"
+            >
+
+          </div>
+
+          <!-- EMAIL -->
 
           <div class="form-group">
 
@@ -253,6 +263,8 @@
 
           </div>
 
+          <!-- SENHA -->
+
           <div class="form-group">
 
             <label>
@@ -266,6 +278,8 @@
             >
 
           </div>
+
+          <!-- BOTÕES -->
 
           <button
             class="login-button"
@@ -306,7 +320,21 @@
 
       </div>
 
-      <!-- BUSCA -->
+      <!-- VISITAS -->
+
+      <div class="side-box">
+
+        <h3>
+          Estatísticas
+        </h3>
+
+        <p id="visitCounter">
+          👁️ Carregando...
+        </p>
+
+      </div>
+
+      <!-- RESULTADO DA BUSCA -->
 
       <div class="side-box">
 
@@ -317,6 +345,32 @@
         <div id="searchResults">
 
           Nenhuma pesquisa feita.
+
+        </div>
+
+      </div>
+
+      <!-- NOTÍCIAS -->
+
+      <div class="side-box">
+
+        <h3>
+          Notícias
+        </h3>
+
+        <div id="newsContainer">
+
+          <div class="community">
+            Vibra™ agora possui posts em tempo real.
+          </div>
+
+          <div class="community">
+            Sistema de comunidades funcionando.
+          </div>
+
+          <div class="community">
+            Busca de usuários adicionada.
+          </div>
 
         </div>
 
@@ -358,6 +412,8 @@
     type="module"
     src="firebase.js"
   ></script>
+
+  <!-- APP -->
 
   <script
     type="module"
