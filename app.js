@@ -1,4 +1,4 @@
-// app.js COMPLETO E ATUALIZADO
+// app.js
 
 import {
   auth,
@@ -319,8 +319,19 @@ onAuthStateChanged(
       const snap =
         await getDoc(userRef);
 
-      currentUsername =
-        snap.data().username;
+      if(snap.exists()) {
+
+        currentUsername =
+          snap.data().username;
+
+      }
+
+      else {
+
+        currentUsername =
+          "Usuário";
+
+      }
 
       await updateDoc(
 
@@ -430,6 +441,9 @@ postButton.addEventListener(
         likes: 0,
         dislikes: 0,
 
+        likedBy: [],
+        dislikedBy: [],
+
         createdAt:
           serverTimestamp()
 
@@ -444,7 +458,7 @@ postButton.addEventListener(
 );
 
 // ========================================
-// POSTS EM TEMPO REAL
+// POSTS
 // ========================================
 
 const postsQuery =
@@ -485,7 +499,7 @@ onSnapshot(
         div.innerHTML = `
 
           <h3>
-            ${post.username}
+            ${post.username || "Usuário"}
           </h3>
 
           <p>
@@ -494,27 +508,19 @@ onSnapshot(
 
           <div class="post-buttons">
 
-            <button
-              class="likeButton"
-            >
-              👍 ${post.likes}
+            <button class="likeButton">
+              👍 ${post.likes || 0}
             </button>
 
-            <button
-              class="dislikeButton"
-            >
-              👎 ${post.dislikes}
+            <button class="dislikeButton">
+              👎 ${post.dislikes || 0}
             </button>
 
-            <button
-              class="commentButton"
-            >
+            <button class="commentButton">
               💬 Comentar
             </button>
 
-            <button
-              class="hideButton"
-            >
+            <button class="hideButton">
               🚫 Ocultar
             </button>
 
@@ -525,9 +531,7 @@ onSnapshot(
               ?
 
               `
-              <button
-                class="deleteButton"
-              >
+              <button class="deleteButton">
                 🗑️ Excluir
               </button>
               `
@@ -537,10 +541,6 @@ onSnapshot(
               ""
 
             }
-
-          </div>
-
-          <div class="comments">
 
           </div>
 
@@ -557,6 +557,19 @@ onSnapshot(
 
           async () => {
 
+            if(!currentUser) return;
+
+            const alreadyLiked =
+              post.likedBy?.includes(
+                currentUser.uid
+              );
+
+            if(alreadyLiked) {
+
+              return;
+
+            }
+
             await updateDoc(
 
               doc(
@@ -568,7 +581,15 @@ onSnapshot(
               {
 
                 likes:
-                  increment(1)
+                  increment(1),
+
+                likedBy: [
+
+                  ...(post.likedBy || []),
+
+                  currentUser.uid
+
+                ]
 
               }
 
@@ -589,6 +610,19 @@ onSnapshot(
 
           async () => {
 
+            if(!currentUser) return;
+
+            const alreadyDisliked =
+              post.dislikedBy?.includes(
+                currentUser.uid
+              );
+
+            if(alreadyDisliked) {
+
+              return;
+
+            }
+
             await updateDoc(
 
               doc(
@@ -600,7 +634,15 @@ onSnapshot(
               {
 
                 dislikes:
-                  increment(1)
+                  increment(1),
+
+                dislikedBy: [
+
+                  ...(post.dislikedBy || []),
+
+                  currentUser.uid
+
+                ]
 
               }
 
@@ -639,12 +681,12 @@ onSnapshot(
 
           async () => {
 
-            const text =
+            const comment =
               prompt(
                 "Comentário:"
               );
 
-            if(!text) return;
+            if(!comment) return;
 
             await addDoc(
 
@@ -656,16 +698,22 @@ onSnapshot(
               {
 
                 postId,
+
                 username:
                   currentUsername,
 
-                text,
+                text:
+                  comment,
 
                 createdAt:
                   serverTimestamp()
 
               }
 
+            );
+
+            alert(
+              "Comentário enviado!"
             );
 
           }
@@ -675,7 +723,6 @@ onSnapshot(
         // EXCLUIR
 
         const deleteButton =
-
           div.querySelector(
             ".deleteButton"
           );
@@ -726,7 +773,7 @@ onSnapshot(
 );
 
 // ========================================
-// COMUNIDADES REAIS
+// COMUNIDADES
 // ========================================
 
 onSnapshot(
@@ -737,12 +784,26 @@ onSnapshot(
 
     communityContainer.innerHTML = "";
 
+    if(snapshot.empty) {
+
+      communityContainer.innerHTML = `
+
+        <div class="community">
+          Nenhuma comunidade ainda.
+        </div>
+
+      `;
+
+      return;
+
+    }
+
     snapshot.forEach(
 
-      (docData) => {
+      (communityDoc) => {
 
         const community =
-          docData.data();
+          communityDoc.data();
 
         const div =
           document.createElement("div");
@@ -778,12 +839,16 @@ searchButton.addEventListener(
 
   async () => {
 
+    const search =
+      searchInput.value
+      .toLowerCase();
+
+    searchResults.innerHTML = "";
+
     const snapshot =
       await getDocs(
         collection(db, "users")
       );
-
-    searchResults.innerHTML = "";
 
     snapshot.forEach(
 
@@ -795,14 +860,9 @@ searchButton.addEventListener(
         if(
 
           user.username
-          .toLowerCase()
+          ?.toLowerCase()
 
-          .includes(
-
-            searchInput.value
-            .toLowerCase()
-
-          )
+          .includes(search)
 
         ) {
 
@@ -825,6 +885,15 @@ searchButton.addEventListener(
 
     );
 
+    if(searchResults.innerHTML === "") {
+
+      searchResults.innerHTML =
+
+        "Nenhum usuário encontrado.";
+
+    }
+
   }
 
 );
+
