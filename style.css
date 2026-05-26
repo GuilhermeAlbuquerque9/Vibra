@@ -215,7 +215,7 @@ body {
 /* LOGIN */
 
 .login-top {
-  background: linear-gradient(to right, #70b67c, #7fc5ff);
+  background: #62cb74;
 
   color: white;
 
@@ -237,7 +237,7 @@ body {
 .login-box h2 {
   text-align: center;
 
-  color: #2c5e45;
+  color: #2458d3;
 
   margin-bottom: 20px;
 }
@@ -306,7 +306,7 @@ body {
 }
 
 .side-box h3 {
-  color: #8666d6;
+  color: #2458d3;
 
   margin-bottom: 10px;
 }
