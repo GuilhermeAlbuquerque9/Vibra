@@ -30,7 +30,9 @@ import {
   increment,
   deleteDoc,
   getDoc,
-  setDoc
+  setDoc,
+  arrayUnion,
+  arrayRemove
 
 }
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
@@ -66,6 +68,12 @@ const postButton =
 const postsContainer =
   document.getElementById("postsContainer");
 
+const onlineCounter =
+  document.getElementById("onlineCounter");
+
+const visitCounter =
+  document.getElementById("visitCounter");
+
 const searchButton =
   document.getElementById("searchButton");
 
@@ -74,12 +82,6 @@ const searchInput =
 
 const searchResults =
   document.getElementById("searchResults");
-
-const onlineCounter =
-  document.getElementById("onlineCounter");
-
-const visitCounter =
-  document.getElementById("visitCounter");
 
 const communityContainer =
   document.getElementById("communityContainer");
@@ -115,12 +117,18 @@ async function registerVisit() {
 
   else {
 
-    await updateDoc(visitRef, {
+    await updateDoc(
 
-      count:
-        increment(1)
+      visitRef,
 
-    });
+      {
+
+        count:
+          increment(1)
+
+      }
+
+    );
 
   }
 
@@ -201,8 +209,7 @@ registerButton.addEventListener(
           email:
             email.value,
 
-          active:
-            true,
+          active: true,
 
           createdAt:
             serverTimestamp()
@@ -249,10 +256,6 @@ loginButton.addEventListener(
 
       );
 
-      alert(
-        "Login realizado!"
-      );
-
     }
 
     catch(error) {
@@ -279,17 +282,31 @@ logoutButton.addEventListener(
 
     if(currentUser) {
 
-      await updateDoc(
+      const userRef =
+        doc(
+          db,
+          "users",
+          currentUser.uid
+        );
 
-        doc(db, "users", currentUser.uid),
+      const snap =
+        await getDoc(userRef);
 
-        {
+      if(snap.exists()) {
 
-          active: false
+        await updateDoc(
 
-        }
+          userRef,
 
-      );
+          {
+
+            active: false
+
+          }
+
+        );
+
+      }
 
     }
 
@@ -300,7 +317,7 @@ logoutButton.addEventListener(
 );
 
 // ========================================
-// LOGIN DETECTION
+// AUTH
 // ========================================
 
 onAuthStateChanged(
@@ -314,36 +331,63 @@ onAuthStateChanged(
       currentUser = user;
 
       const userRef =
-        doc(db, "users", user.uid);
+        doc(
+          db,
+          "users",
+          user.uid
+        );
 
       const snap =
         await getDoc(userRef);
 
-      if(snap.exists()) {
+      // CASO O USER NÃO EXISTA
 
-        currentUsername =
-          snap.data().username;
+      if(!snap.exists()) {
 
-      }
+        await setDoc(
 
-      else {
+          userRef,
+
+          {
+
+            username:
+              "Usuário",
+
+            email:
+              user.email,
+
+            active: true,
+
+            createdAt:
+              serverTimestamp()
+
+          }
+
+        );
 
         currentUsername =
           "Usuário";
 
       }
 
-      await updateDoc(
+      else {
 
-        userRef,
+        currentUsername =
+          snap.data().username;
 
-        {
+        await updateDoc(
 
-          active: true
+          userRef,
 
-        }
+          {
 
-      );
+            active: true
+
+          }
+
+        );
+
+      }
 
     }
 
@@ -359,7 +403,7 @@ onAuthStateChanged(
 );
 
 // ========================================
-// USUÁRIOS ONLINE
+// ONLINE
 // ========================================
 
 onSnapshot(
@@ -372,9 +416,12 @@ onSnapshot(
 
     snapshot.forEach(
 
-      (doc) => {
+      (userDoc) => {
 
-        if(doc.data().active) {
+        const user =
+          userDoc.data();
+
+        if(user.active) {
 
           online++;
 
@@ -385,6 +432,7 @@ onSnapshot(
     );
 
     onlineCounter.innerText =
+
       "🟢 " +
       online +
       " usuários ativos";
@@ -415,10 +463,6 @@ postButton.addEventListener(
 
     if(postInput.value === "") {
 
-      alert(
-        "Digite algo!"
-      );
-
       return;
 
     }
@@ -443,6 +487,8 @@ postButton.addEventListener(
 
         likedBy: [],
         dislikedBy: [],
+
+        comments: [],
 
         createdAt:
           serverTimestamp()
@@ -496,6 +542,18 @@ onSnapshot(
 
         div.classList.add("post");
 
+        const liked =
+          currentUser &&
+          post.likedBy?.includes(
+            currentUser.uid
+          );
+
+        const disliked =
+          currentUser &&
+          post.dislikedBy?.includes(
+            currentUser.uid
+          );
+
         div.innerHTML = `
 
           <h3>
@@ -509,19 +567,27 @@ onSnapshot(
           <div class="post-buttons">
 
             <button class="likeButton">
+
               👍 ${post.likes || 0}
+
             </button>
 
             <button class="dislikeButton">
+
               👎 ${post.dislikes || 0}
+
             </button>
 
             <button class="commentButton">
+
               💬 Comentar
+
             </button>
 
             <button class="hideButton">
+
               🚫 Ocultar
+
             </button>
 
             ${
@@ -532,7 +598,9 @@ onSnapshot(
 
               `
               <button class="deleteButton">
+
                 🗑️ Excluir
+
               </button>
               `
 
@@ -544,9 +612,44 @@ onSnapshot(
 
           </div>
 
+          <div class="commentsArea">
+
+            ${
+              (post.comments || [])
+
+              .map(
+
+                (comment) => `
+
+                  <div class="community">
+
+                    <strong>
+
+                      ${comment.username}
+
+                    </strong>
+
+                    <br>
+
+                    ${comment.text}
+
+                  </div>
+
+                `
+
+              )
+
+              .join("")
+
+            }
+
+          </div>
+
         `;
 
-        // LIKE
+        // ========================================
+        // LIKE TOGGLE
+        // ========================================
 
         div
         .querySelector(".likeButton")
@@ -559,47 +662,64 @@ onSnapshot(
 
             if(!currentUser) return;
 
-            const alreadyLiked =
-              post.likedBy?.includes(
-                currentUser.uid
-              );
-
-            if(alreadyLiked) {
-
-              return;
-
-            }
-
-            await updateDoc(
-
+            const postRef =
               doc(
                 db,
                 "posts",
                 postId
-              ),
+              );
 
-              {
+            if(liked) {
 
-                likes:
-                  increment(1),
+              await updateDoc(
 
-                likedBy: [
+                postRef,
 
-                  ...(post.likedBy || []),
+                {
 
-                  currentUser.uid
+                  likes:
+                    increment(-1),
 
-                ]
+                  likedBy:
+                    arrayRemove(
+                      currentUser.uid
+                    )
 
-              }
+                }
 
-            );
+              );
+
+            }
+
+            else {
+
+              await updateDoc(
+
+                postRef,
+
+                {
+
+                  likes:
+                    increment(1),
+
+                  likedBy:
+                    arrayUnion(
+                      currentUser.uid
+                    )
+
+                }
+
+              );
+
+            }
 
           }
 
         );
 
-        // DISLIKE
+        // ========================================
+        // DISLIKE TOGGLE
+        // ========================================
 
         div
         .querySelector(".dislikeButton")
@@ -612,47 +732,64 @@ onSnapshot(
 
             if(!currentUser) return;
 
-            const alreadyDisliked =
-              post.dislikedBy?.includes(
-                currentUser.uid
-              );
-
-            if(alreadyDisliked) {
-
-              return;
-
-            }
-
-            await updateDoc(
-
+            const postRef =
               doc(
                 db,
                 "posts",
                 postId
-              ),
+              );
 
-              {
+            if(disliked) {
 
-                dislikes:
-                  increment(1),
+              await updateDoc(
 
-                dislikedBy: [
+                postRef,
 
-                  ...(post.dislikedBy || []),
+                {
 
-                  currentUser.uid
+                  dislikes:
+                    increment(-1),
 
-                ]
+                  dislikedBy:
+                    arrayRemove(
+                      currentUser.uid
+                    )
 
-              }
+                }
 
-            );
+              );
+
+            }
+
+            else {
+
+              await updateDoc(
+
+                postRef,
+
+                {
+
+                  dislikes:
+                    increment(1),
+
+                  dislikedBy:
+                    arrayUnion(
+                      currentUser.uid
+                    )
+
+                }
+
+              );
+
+            }
 
           }
 
         );
 
+        // ========================================
         // OCULTAR
+        // ========================================
 
         div
         .querySelector(".hideButton")
@@ -670,7 +807,9 @@ onSnapshot(
 
         );
 
+        // ========================================
         // COMENTAR
+        // ========================================
 
         div
         .querySelector(".commentButton")
@@ -681,48 +820,49 @@ onSnapshot(
 
           async () => {
 
-            const comment =
+            if(!currentUser) return;
+
+            const text =
               prompt(
                 "Comentário:"
               );
 
-            if(!comment) return;
+            if(!text) return;
 
-            await addDoc(
+            await updateDoc(
 
-              collection(
+              doc(
                 db,
-                "comments"
+                "posts",
+                postId
               ),
 
               {
 
-                postId,
+                comments:
+                  arrayUnion({
 
-                username:
-                  currentUsername,
+                    username:
+                      currentUsername,
 
-                text:
-                  comment,
+                    text
 
-                createdAt:
-                  serverTimestamp()
+                  })
 
               }
 
-            );
-
-            alert(
-              "Comentário enviado!"
             );
 
           }
 
         );
 
+        // ========================================
         // EXCLUIR
+        // ========================================
 
         const deleteButton =
+
           div.querySelector(
             ".deleteButton"
           );
@@ -830,7 +970,7 @@ onSnapshot(
 );
 
 // ========================================
-// BUSCA REAL
+// BUSCA
 // ========================================
 
 searchButton.addEventListener(
@@ -896,4 +1036,3 @@ searchButton.addEventListener(
   }
 
 );
-
