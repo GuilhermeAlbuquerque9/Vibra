@@ -1,0 +1,334 @@
+<!-- comunidade.html -->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Comunidade — Vibra™
+  </title>
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="./assets/Vibra_icon.png"
+  >
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
+</head>
+
+<body>
+
+  <!-- TOPO -->
+
+  <header class="top-header">
+
+    <div class="logo-area">
+
+      <img
+
+        src="./assets/Vibra_logo.png"
+
+        class="logo"
+
+        alt="Vibra™"
+
+      >
+
+    </div>
+
+    <div class="header-links">
+
+      <a href="index.html">
+        Home
+      </a>
+
+      |
+
+      <a href="sobre.html">
+        Sobre
+      </a>
+
+      |
+
+      <a href="comunidades.html">
+        Comunidades
+      </a>
+
+      |
+
+      <a href="chat.html">
+        Chat
+      </a>
+
+      |
+
+      <a href="perfil.html">
+        Perfil
+      </a>
+
+    </div>
+
+  </header>
+
+  <!-- MENU -->
+
+  <nav class="navbar">
+
+    <a href="index.html">
+      Home
+    </a>
+
+    <a href="sobre.html">
+      Sobre
+    </a>
+
+    <a href="comunidades.html">
+      Comunidades
+    </a>
+
+    <a href="chat.html">
+      Messenger
+    </a>
+
+    <a href="perfil.html">
+      Perfil
+    </a>
+
+  </nav>
+
+  <!-- CONTEÚDO -->
+
+  <main class="main-layout">
+
+    <!-- ESQUERDA -->
+
+    <section class="left-content">
+
+      <!-- CABEÇALHO -->
+
+      <div class="box">
+
+        <div class="box-title orange">
+
+          Comunidade
+
+        </div>
+
+        <h2 id="communityName">
+
+          Carregando...
+
+        </h2>
+
+        <p id="communityDescription">
+
+          Carregando descrição...
+
+        </p>
+
+        <hr>
+
+        <p>
+
+          👤 Criador:
+          <strong id="communityOwner">
+
+            Carregando...
+
+          </strong>
+
+        </p>
+
+        <p>
+
+          👥 Membros:
+          <strong id="communityMembers">
+
+            0
+
+          </strong>
+
+        </p>
+
+        <p>
+
+          📅 Criada em:
+          <strong id="communityCreated">
+
+            --
+
+          </strong>
+
+        </p>
+
+        <br>
+
+        <button
+          id="joinButton"
+        >
+
+          Entrar
+
+        </button>
+
+        <button
+          id="deleteCommunityButton"
+          style="display:none"
+        >
+
+          🗑️ Excluir Comunidade
+
+        </button>
+
+      </div>
+
+      <!-- CHAT -->
+
+      <div class="box">
+
+        <div class="box-title purple">
+
+          Conversa da Comunidade
+
+        </div>
+
+        <div
+          id="messagesContainer"
+        >
+
+          Carregando mensagens...
+
+        </div>
+
+        <br>
+
+        <textarea
+
+          id="messageInput"
+
+          placeholder="Escreva uma mensagem..."
+
+        ></textarea>
+
+        <br><br>
+
+        <button
+          id="sendMessageButton"
+        >
+
+          Enviar Mensagem
+
+        </button>
+
+      </div>
+
+    </section>
+
+    <!-- DIREITA -->
+
+    <aside class="right-content">
+
+      <div class="side-box">
+
+        <h3>
+
+          Comunidade
+
+        </h3>
+
+        <p>
+
+          Converse com outros membros
+          desta comunidade.
+
+        </p>
+
+      </div>
+
+      <div class="side-box">
+
+        <h3>
+
+          Informações
+
+        </h3>
+
+        <p>
+
+          Apenas membros podem
+          enviar mensagens.
+
+        </p>
+
+      </div>
+
+      <div class="side-box">
+
+        <h3>
+
+          Dica
+
+        </h3>
+
+        <p>
+
+          Respeite os outros membros
+          e mantenha a conversa agradável.
+
+        </p>
+
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- RODAPÉ -->
+
+  <footer>
+
+    <p>
+
+      © Retropixel™, 2025-2026.
+      Todos os direitos reservados.
+
+    </p>
+
+  </footer>
+
+  <!-- SOM -->
+
+  <audio
+
+    id="clickSound"
+
+    src="./assets/click.wav"
+
+    preload="auto"
+
+  ></audio>
+
+  <!-- SCRIPT -->
+
+  <script
+
+    type="module"
+
+    src="comunidade.js"
+
+  ></script>
+
+</body>
+</html>
