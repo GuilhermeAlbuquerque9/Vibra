@@ -39,43 +39,42 @@
       <img
         src="./assets/Vibra_logo.png"
         class="logo"
+        alt="Vibra™"
       >
 
     </div>
 
     <div class="header-links">
 
-      <a href="index.html">
-        Home
-      </a>
+      <a href="index.html">Home</a> |
 
-      |
+      <a href="sobre.html">Sobre</a> |
 
-      <a href="sobre.html">
-        Sobre
-      </a>
+      <a href="comunidades.html">Comunidades</a> |
 
-      |
+      <a href="chat.html">Chat</a> |
 
-      <a href="comunidades.html">
-        Comunidades
-      </a>
-
-      |
-
-      <a href="chat.html">
-        Chat
-      </a>
-
-      |
-
-      <a href="perfil.html">
-        Perfil
-      </a>
+      <a href="perfil.html">Perfil</a>
 
     </div>
 
   </header>
+
+  <!-- MENU -->
+
+  <nav class="navbar">
+
+    <a href="index.html">Home</a>
+
+    <a href="sobre.html">Sobre</a>
+
+    <a href="comunidades.html">Comunidades</a>
+
+    <a href="chat.html">Messenger</a>
+
+    <a href="perfil.html">Perfil</a>
+
+  </nav>
 
   <!-- CONTEÚDO -->
 
@@ -101,11 +100,13 @@
             type="text"
             id="communityName"
             placeholder="Nome da comunidade"
+            maxlength="60"
           >
 
           <textarea
             id="communityDescription"
             placeholder="Descrição da comunidade"
+            maxlength="300"
           ></textarea>
 
           <button id="createCommunityButton">
@@ -115,6 +116,24 @@
           </button>
 
         </div>
+
+      </div>
+
+      <!-- BUSCA -->
+
+      <div class="box">
+
+        <div class="box-title blue">
+
+          Buscar Comunidades
+
+        </div>
+
+        <input
+          type="text"
+          id="communitySearch"
+          placeholder="Pesquisar comunidade..."
+        >
 
       </div>
 
@@ -128,9 +147,19 @@
 
         </div>
 
+        <p id="communityCount">
+
+          Carregando...
+
+        </p>
+
         <div id="communitiesContainer">
 
-          Carregando comunidades...
+          <div class="community">
+
+            Carregando comunidades...
+
+          </div>
 
         </div>
 
@@ -145,7 +174,9 @@
       <div class="side-box">
 
         <h3>
+
           Comunidades
+
         </h3>
 
         <p>
@@ -159,13 +190,38 @@
       <div class="side-box">
 
         <h3>
+
+          O que vem por aí?
+
+        </h3>
+
+        <ul>
+
+          <li>💬 Chat da comunidade</li>
+
+          <li>👥 Lista de membros</li>
+
+          <li>📌 Mensagens fixadas</li>
+
+          <li>⭐ Comunidades favoritas</li>
+
+          <li>📝 Tópicos de discussão</li>
+
+        </ul>
+
+      </div>
+
+      <div class="side-box">
+
+        <h3>
+
           Dica
+
         </h3>
 
         <p>
 
-          Crie comunidades retrô, divertidas
-          e criativas 😄
+          Clique em uma comunidade para abrir sua página.
 
         </p>
 
@@ -178,22 +234,35 @@
   <!-- RODAPÉ -->
 
   <footer>
-<p>© Retropixel™, 2025-2026. Todos os direitos reservados.</p>
+
+    <p>
+
+      © Retropixel™, 2025-2026. Todos os direitos reservados.
+
+    </p>
+
   </footer>
 
   <!-- SOM -->
 
   <audio
+
     id="clickSound"
+
     src="./assets/click.wav"
+
     preload="auto"
+
   ></audio>
 
   <!-- SCRIPT -->
 
   <script
+
     type="module"
+
     src="comunidades.js"
+
   ></script>
 
 </body>
