@@ -28,7 +28,9 @@ import {
 }
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
+// ========================================
 // ELEMENTOS
+// ========================================
 
 const $ = (id) =>
   document.getElementById(id);
@@ -45,16 +47,30 @@ const createCommunityButton =
 const communitiesContainer =
   $("communitiesContainer");
 
+const communitySearch =
+  $("communitySearch");
+
+const communityCount =
+  $("communityCount");
+
 const clickSound =
   $("clickSound");
 
-// USUÁRIO
+// ========================================
+// VARIÁVEIS
+// ========================================
 
 let currentUser = null;
 
+let communities = [];
+
+// ========================================
 // SOM
+// ========================================
 
 function playClick() {
+
+  if(!clickSound) return;
 
   clickSound.currentTime = 0;
   clickSound.play();
@@ -65,9 +81,14 @@ document.addEventListener(
 
   "click",
 
-  (e) => {
+  (event) => {
 
-    if(e.target.tagName === "BUTTON") {
+    if(
+
+      event.target.tagName ===
+      "BUTTON"
+
+    ) {
 
       playClick();
 
@@ -77,7 +98,9 @@ document.addEventListener(
 
 );
 
-// AUTH
+// ========================================
+// LOGIN
+// ========================================
 
 onAuthStateChanged(
 
@@ -91,48 +114,72 @@ onAuthStateChanged(
 
 );
 
+// ========================================
 // CRIAR COMUNIDADE
+// ========================================
 
 createCommunityButton.onclick =
 async () => {
 
   if(!currentUser) {
 
-    return alert(
-      "Faça login!"
+    alert(
+      "Faça login primeiro."
     );
+
+    return;
 
   }
 
+  const name =
+
+    communityName.value
+    .trim();
+
+  const description =
+
+    communityDescription.value
+    .trim();
+
   if(
-    !communityName.value ||
-    !communityDescription.value
+
+    name === "" ||
+
+    description === ""
+
   ) {
 
-    return alert(
-      "Preencha tudo!"
+    alert(
+      "Preencha todos os campos."
     );
+
+    return;
 
   }
 
   await addDoc(
 
-    collection(db, "communities"),
+    collection(
+      db,
+      "communities"
+    ),
 
     {
 
-      name:
-        communityName.value,
+      name,
 
-      description:
-        communityDescription.value,
+      description,
 
       ownerId:
         currentUser.uid,
 
-      members: [],
+      members: [
 
-      memberCount: 0,
+        currentUser.uid
+
+      ],
+
+      memberCount: 1,
 
       createdAt:
         serverTimestamp()
@@ -142,11 +189,186 @@ async () => {
   );
 
   communityName.value = "";
+
   communityDescription.value = "";
 
 };
 
-// COMUNIDADES
+// ========================================
+// PESQUISA
+// ========================================
+
+communitySearch.addEventListener(
+
+  "input",
+
+  () => {
+
+    renderCommunities(
+      communitySearch.value
+    );
+
+  }
+
+);
+
+// ========================================
+// RENDERIZAR
+// ========================================
+
+function renderCommunities(search = "") {
+
+  communitiesContainer.innerHTML = "";
+
+  const filter =
+
+    search
+    .trim()
+    .toLowerCase();
+
+  const filtered =
+
+    communities.filter(
+
+      (community) =>
+
+        community.name
+
+        .toLowerCase()
+
+        .includes(filter)
+
+    );
+
+  communityCount.innerText =
+
+    `${filtered.length} comunidade(s) encontrada(s)`;
+
+  if(
+
+    filtered.length === 0
+
+  ) {
+
+    communitiesContainer.innerHTML = `
+
+      <div class="community">
+
+        Nenhuma comunidade encontrada.
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+  filtered.forEach(
+
+    ({ id, data }) => {
+
+      const joined =
+
+        data.members?.includes(
+
+          currentUser?.uid
+
+        );
+
+      const card =
+
+        document.createElement(
+          "div"
+        );
+
+      card.className =
+        "community";
+
+      card.innerHTML = `
+
+        <div
+          class="community-header"
+          style="cursor:pointer"
+        >
+
+          <h3>
+
+            🌎 ${data.name}
+
+          </h3>
+
+        </div>
+
+        <p>
+
+          ${data.description}
+
+        </p>
+
+        <p>
+
+          👥 ${data.memberCount || 0} membro(s)
+
+        </p>
+
+        <button
+          class="joinButton"
+        >
+
+          ${
+
+            joined
+
+            ?
+
+            "Sair"
+
+            :
+
+            "Entrar"
+
+          }
+
+        </button>
+
+      `;
+
+      // ABRIR COMUNIDADE
+
+      card
+
+      .querySelector(
+
+        ".community-header"
+
+      )
+
+      .onclick = () => {
+
+        playClick();
+
+        location.href =
+
+          `comunidade.html?id=${id}`;
+
+      };
+
+      // O botão Entrar/Sair
+      // continua na Parte 2.
+
+      communitiesContainer
+      .appendChild(card);
+
+    }
+
+  );
+
+}
+
+// ========================================
+// CARREGAR COMUNIDADES
+// ========================================
 
 onSnapshot(
 
@@ -154,147 +376,178 @@ onSnapshot(
 
   (snapshot) => {
 
-    communitiesContainer.innerHTML = "";
-
-    if(snapshot.empty) {
-
-      communitiesContainer.innerHTML = `
-
-        <div class="community">
-
-          Nenhuma comunidade ainda.
-
-        </div>
-
-      `;
-
-      return;
-
-    }
+    communities = [];
 
     snapshot.forEach(
 
       (communityDoc) => {
 
-        const community =
-          communityDoc.data();
+        communities.push({
 
-        const id =
-          communityDoc.id;
+          id:
+            communityDoc.id,
 
-        const joined =
+          data:
+            communityDoc.data()
 
-          community.members
-          ?.includes(
-            currentUser?.uid
-          );
-
-        const div =
-          document.createElement("div");
-
-        div.className =
-          "community";
-
-        div.innerHTML = `
-
-          <h3>
-
-            🌎 ${community.name}
-
-          </h3>
-
-          <p>
-
-            ${community.description}
-
-          </p>
-
-          <p>
-
-            👥 ${community.memberCount || 0} membros
-
-          </p>
-
-          <button class="joinButton">
-
-            ${
-              joined
-
-              ?
-
-              "Sair"
-
-              :
-
-              "Entrar"
-            }
-
-          </button>
-
-        `;
-
-        // ENTRAR / SAIR
-
-        div.querySelector(".joinButton")
-
-        .onclick = async () => {
-
-          if(!currentUser) {
-
-            return alert(
-              "Faça login!"
-            );
-
-          }
-
-          const ref =
-            doc(
-              db,
-              "communities",
-              id
-            );
-
-          if(joined) {
-
-            await updateDoc(ref, {
-
-              members:
-                arrayRemove(
-                  currentUser.uid
-                ),
-
-              memberCount:
-                increment(-1)
-
-            });
-
-          }
-
-          else {
-
-            await updateDoc(ref, {
-
-              members:
-                arrayUnion(
-                  currentUser.uid
-                ),
-
-              memberCount:
-                increment(1)
-
-            });
-
-          }
-
-        };
-
-        communitiesContainer
-        .appendChild(div);
+        });
 
       }
+
+    );
+
+    renderCommunities(
+
+      communitySearch.value
 
     );
 
   }
 
 );
+
+// ========================================
+// ENTRAR / SAIR
+// ========================================
+
+communitiesContainer.addEventListener(
+
+  "click",
+
+  async (event) => {
+
+    const button =
+
+      event.target.closest(
+        ".joinButton"
+      );
+
+    if(!button) return;
+
+    if(!currentUser) {
+
+      alert(
+        "Faça login primeiro."
+      );
+
+      return;
+
+    }
+
+    playClick();
+
+    const card =
+
+      button.closest(
+        ".community"
+      );
+
+    const title =
+
+      card.querySelector("h3")
+      .textContent
+      .replace("🌎","")
+      .trim();
+
+    const community =
+
+      communities.find(
+
+        (c) =>
+
+          c.data.name === title
+
+      );
+
+    if(!community) return;
+
+    const joined =
+
+      community.data.members
+      ?.includes(
+        currentUser.uid
+      );
+
+    const ref =
+
+      doc(
+
+        db,
+
+        "communities",
+
+        community.id
+
+      );
+
+    if(joined) {
+
+      await updateDoc(
+
+        ref,
+
+        {
+
+          members:
+
+            arrayRemove(
+
+              currentUser.uid
+
+            ),
+
+          memberCount:
+
+            increment(-1)
+
+        }
+
+      );
+
+    }
+
+    else {
+
+      await updateDoc(
+
+        ref,
+
+        {
+
+          members:
+
+            arrayUnion(
+
+              currentUser.uid
+
+            ),
+
+          memberCount:
+
+            increment(1)
+
+        }
+
+      );
+
+    }
+
+  }
+
+);
+
+// ========================================
+// MENSAGEM INICIAL
+// ========================================
+
+if(
+
+  communityCount
+
+) {
+
+  communityCount.innerText =
+
+    "Carregando comunidades...";
+
+}
