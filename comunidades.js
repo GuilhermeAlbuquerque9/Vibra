@@ -226,19 +226,15 @@ function renderCommunities(search = "") {
     .trim()
     .toLowerCase();
 
-  const filtered =
+  const filtered = communities.filter(
 
-    communities.filter(
+  (community) =>
 
-      (community) =>
+    (community.data.name || "")
+      .toLowerCase()
+      .includes(filter)
 
-        community.name
-
-        .toLowerCase()
-
-        .includes(filter)
-
-    );
+);
 
   communityCount.innerText =
 
