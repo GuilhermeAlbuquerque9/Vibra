@@ -11,27 +11,45 @@ import {
 }
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
+// ========================================
+// ELEMENTOS
+// ========================================
+
 const params =
   new URLSearchParams(
     window.location.search
   );
 
 const search =
-  params.get("q")
-  ?.toLowerCase();
+
+  (
+    params.get("q") || ""
+  )
+  .toLowerCase();
 
 const results =
+
   document.getElementById(
     "results"
   );
+
+// ========================================
+// BUSCA
+// ========================================
 
 async function searchUsers() {
 
   results.innerHTML = "";
 
   const snapshot =
+
     await getDocs(
-      collection(db, "users")
+
+      collection(
+        db,
+        "users"
+      )
+
     );
 
   let found = false;
@@ -45,8 +63,9 @@ async function searchUsers() {
 
       if(
 
-        user.username
-        ?.toLowerCase()
+        (user.username || "")
+
+        .toLowerCase()
 
         .includes(search)
 
@@ -54,20 +73,40 @@ async function searchUsers() {
 
         found = true;
 
-        const div =
-          document.createElement("div");
+        const card =
+          document.createElement(
+            "div"
+          );
 
-        div.classList.add(
-          "community"
-        );
+        card.className =
+          "community";
 
-        div.innerHTML = `
+        card.style.cursor =
+          "pointer";
 
-          👤 ${user.username}
+        card.innerHTML = `
+
+          <strong>
+
+            👤 ${user.username}
+
+          </strong>
+
+          <br>
+
+          Clique para abrir o perfil.
 
         `;
 
-        results.appendChild(div);
+        card.onclick = () => {
+
+          location.href =
+
+            `usuario.html?id=${userDoc.id}`;
+
+        };
+
+        results.appendChild(card);
 
       }
 
