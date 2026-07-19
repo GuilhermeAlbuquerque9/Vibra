@@ -367,364 +367,385 @@ footer {
 
 }
 
-/* ========================================
+/* ==========================================
    CHAT
-======================================== */
+========================================== */
 
-.window{
+.window {
 
-    display:flex;
-    width:100%;
-    height:calc(100vh - 40px);
+  display: grid;
+  grid-template-columns: 280px 1fr;
+
+  width: 95%;
+  height: calc(100vh - 180px);
+
+  margin: 20px auto;
+
+  background: white;
+
+  border: 1px solid #c9d7cb;
 
 }
 
-/* ========================================
+/* ==========================================
    SIDEBAR
-======================================== */
+========================================== */
 
-.chat-sidebar{
+.chat-sidebar {
 
-    width:300px;
-    min-width:300px;
+  display: flex;
+  flex-direction: column;
 
-    display:flex;
-    flex-direction:column;
+  border-right: 1px solid #c9d7cb;
 
-    border-right:1px solid #9db8d9;
-
-    background:linear-gradient(
-        #f7fbff,
-        #dfeeff
-    );
+  background: #f7faf8;
 
 }
 
-.sidebar-header{
+.sidebar-header {
 
-    padding:20px;
-    text-align:center;
+  text-align: center;
 
-    border-bottom:1px solid #b8d2ef;
+  padding: 15px;
 
-}
-
-.sidebar-logo{
-
-    width:64px;
-    height:64px;
-
-    margin-bottom:10px;
+  border-bottom: 1px solid #c9d7cb;
 
 }
 
-.sidebar-header h2{
+.sidebar-logo {
 
-    margin:0;
+  width: 80px;
 
-}
-
-.sidebar-actions{
-
-    padding:10px;
+  margin-bottom: 10px;
 
 }
 
-.sidebar-actions button{
+.sidebar-header h2 {
 
-    width:100%;
-
-}
-
-.friends-title{
-
-    padding:12px;
-
-    font-weight:bold;
-
-    border-top:1px solid #c7daf3;
-    border-bottom:1px solid #c7daf3;
-
-    background:#eef7ff;
+  color: #2458d3;
 
 }
 
-.friends-list{
+.sidebar-actions {
 
-    flex:1;
-
-    overflow-y:auto;
+  padding: 10px;
 
 }
 
-/* ========================================
-   CONTATO
-======================================== */
+.sidebar-actions button {
 
-.friend{
-
-    display:flex;
-    align-items:center;
-    gap:12px;
-
-    padding:12px;
-
-    cursor:pointer;
-
-    border-bottom:1px solid #d8e7f8;
-
-    transition:.2s;
+  width: 100%;
 
 }
 
-.friend:hover{
+.friends-title {
 
-    background:#dcebff;
+  padding: 10px;
 
-}
+  background: #57b36d;
 
-.friend img{
+  color: white;
 
-    width:48px;
-    height:48px;
-
-    border-radius:50%;
-
-    border:1px solid #8eb2de;
+  font-weight: bold;
 
 }
 
-.friend strong{
+/* ==========================================
+   LISTA DE AMIGOS
+========================================== */
 
-    display:block;
+.friends-list {
 
-    margin-bottom:3px;
+  flex: 1;
 
-}
-
-.friend span{
-
-    color:#666;
-
-    font-size:13px;
+  overflow-y: auto;
 
 }
 
-/* ========================================
+.friend {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 10px;
+
+  border-bottom: 1px solid #dce6de;
+
+  cursor: pointer;
+
+  transition: background .15s;
+
+}
+
+.friend:hover {
+
+  background: #eef7f1;
+
+}
+
+.friend img {
+
+  width: 48px;
+  height: 48px;
+
+  border-radius: 8px;
+
+  border: 1px solid #c9d7cb;
+
+}
+
+.friend strong {
+
+  color: #2458d3;
+
+}
+
+.friend span {
+
+  color: #666;
+
+  font-size: 12px;
+
+}
+
+/* ==========================================
    CHAT
-======================================== */
+========================================== */
 
-.chat-main{
+.chat-main {
 
-    flex:1;
+  display: flex;
 
-    display:flex;
-    flex-direction:column;
-
-    background:#ffffff;
+  flex-direction: column;
 
 }
 
-.chat-header{
+.chat-header {
 
-    display:flex;
-    align-items:center;
+  display: flex;
 
-    padding:15px;
+  align-items: center;
 
-    border-bottom:1px solid #bfd5ef;
+  padding: 15px;
 
-    background:linear-gradient(
-        #fefefe,
-        #e8f3ff
-    );
+  border-bottom: 1px solid #c9d7cb;
+
+  background: #f5f9f6;
 
 }
 
-.chat-user{
+.chat-user {
 
-    display:flex;
-    align-items:center;
+  display: flex;
 
-    gap:15px;
+  align-items: center;
 
-}
-
-.chat-user img{
-
-    width:56px;
-    height:56px;
-
-    border-radius:50%;
-
-    border:1px solid #7fa7d8;
+  gap: 12px;
 
 }
 
-.chat-user h2{
+.chat-user img {
 
-    margin:0;
+  width: 55px;
+  height: 55px;
 
-}
+  border-radius: 8px;
 
-.chat-user span{
-
-    color:#666;
-
-    font-size:13px;
+  border: 1px solid #c9d7cb;
 
 }
 
-/* ========================================
+.chat-user h2 {
+
+  color: #2458d3;
+
+  margin-bottom: 3px;
+
+}
+
+.chat-user span {
+
+  color: #666;
+
+  font-size: 13px;
+
+}
+
+/* ==========================================
    MENSAGENS
-======================================== */
+========================================== */
 
-.messages{
+.messages {
 
-    flex:1;
+  flex: 1;
 
-    overflow-y:auto;
+  overflow-y: auto;
 
-    padding:20px;
+  padding: 20px;
 
-    display:flex;
-    flex-direction:column;
-
-    gap:12px;
-
-    background:#edf6ff;
+  background: #edf4ef;
 
 }
 
-.empty-chat{
+.empty-chat {
 
-    margin:auto;
+  color: #666;
 
-    color:#777;
+  text-align: center;
 
-    text-align:center;
+  margin-top: 50px;
 
 }
 
-/* ========================================
+/* ==========================================
    BALÕES
-======================================== */
+========================================== */
 
-.message{
+.message {
 
-    max-width:70%;
+  max-width: 70%;
 
-    padding:12px;
+  padding: 10px 14px;
 
-    border-radius:12px;
+  margin-bottom: 12px;
 
-    word-break:break-word;
+  border-radius: 10px;
 
-    box-shadow:0 1px 4px rgba(0,0,0,.12);
-
-}
-
-.me{
-
-    align-self:flex-end;
-
-    background:#d5f5c8;
+  word-wrap: break-word;
 
 }
 
-.friend{
+.me {
 
-    align-self:flex-start;
+  margin-left: auto;
 
-    background:white;
+  background: #d7f0dc;
 
-}
-
-.message-text{
-
-    white-space:pre-wrap;
+  border: 1px solid #b7dcbc;
 
 }
 
-.message-time{
+.friend-message {
 
-    margin-top:6px;
+  margin-right: auto;
 
-    text-align:right;
+  background: white;
 
-    font-size:11px;
-
-    color:#666;
+  border: 1px solid #c9d7cb;
 
 }
 
-/* ========================================
+.message-text {
+
+  white-space: pre-wrap;
+
+}
+
+.message-time {
+
+  margin-top: 5px;
+
+  text-align: right;
+
+  color: #777;
+
+  font-size: 11px;
+
+}
+
+/* ==========================================
    RODAPÉ
-======================================== */
+========================================== */
 
-.chat-footer{
+.chat-footer {
 
-    display:flex;
+  display: flex;
 
-    gap:10px;
+  gap: 10px;
 
-    padding:15px;
+  padding: 15px;
 
-    border-top:1px solid #bfd5ef;
+  border-top: 1px solid #c9d7cb;
 
-    background:#eef7ff;
-
-}
-
-.chat-footer input{
-
-    flex:1;
-
-    padding:10px 14px;
-
-    border-radius:8px;
-
-    border:1px solid #8eb2de;
-
-    outline:none;
-
-    font-size:15px;
+  background: #f5f9f6;
 
 }
 
-.chat-footer button{
+.chat-footer input {
 
-    min-width:110px;
+  flex: 1;
+
+  height: 36px;
+
+  padding: 0 10px;
+
+  border: 1px solid #aaa;
 
 }
 
-/* ========================================
+.chat-footer button {
+
+  width: 110px;
+
+}
+
+/* ==========================================
+   BOTÕES
+========================================== */
+
+.chat-footer button,
+.sidebar-actions button {
+
+  background: #57b36d;
+
+  color: white;
+
+  border: none;
+
+  font-weight: bold;
+
+  cursor: pointer;
+
+}
+
+.chat-footer button:hover,
+.sidebar-actions button:hover {
+
+  background: #4aa45f;
+
+}
+
+/* ==========================================
    RESPONSIVO
-======================================== */
+========================================== */
 
 @media (max-width:900px){
 
-    .window{
+  .window{
 
-        flex-direction:column;
+    grid-template-columns:1fr;
 
-    }
+    height:auto;
 
-    .chat-sidebar{
+  }
 
-        width:100%;
-        min-width:100%;
-        height:250px;
+  .chat-sidebar{
 
-        border-right:none;
-        border-bottom:1px solid #bfd5ef;
+    border-right:none;
 
-    }
+    border-bottom:1px solid #c9d7cb;
 
-    .message{
+    max-height:260px;
 
-        max-width:90%;
+  }
 
-    }
+  .message{
+
+    max-width:90%;
+
+  }
 
 }
