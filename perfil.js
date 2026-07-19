@@ -30,7 +30,9 @@ import {
 }
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
+// ========================================
 // ELEMENTOS
+// ========================================
 
 const $ = (id) =>
   document.getElementById(id);
@@ -50,6 +52,18 @@ const profileVisits =
 const profilePosts =
   $("profilePosts");
 
+const profileFriends =
+  $("profileFriends");
+
+const profileCommunities =
+  $("profileCommunities");
+
+const friendRequests =
+  $("friendRequests");
+
+const friendsList =
+  $("friendsList");
+
 const logoutButton =
   $("logoutButton");
 
@@ -59,9 +73,13 @@ const deleteAccountButton =
 const clickSound =
   $("clickSound");
 
+// ========================================
 // SOM
+// ========================================
 
 function playClick() {
+
+  if(!clickSound) return;
 
   clickSound.currentTime = 0;
   clickSound.play();
@@ -84,7 +102,15 @@ document.addEventListener(
 
 );
 
+// ========================================
 // USUÁRIO
+// ========================================
+
+let currentUser = null;
+
+// ========================================
+// AUTH
+// ========================================
 
 onAuthStateChanged(
 
@@ -101,14 +127,18 @@ onAuthStateChanged(
 
     }
 
+    currentUser =
+      user;
+
     const userRef =
+
       doc(
         db,
         "users",
         user.uid
       );
 
-    // VISITA AO PERFIL
+    // VISITA
 
     await updateDoc(
 
@@ -129,7 +159,7 @@ onAuthStateChanged(
     const data =
       snap.data();
 
-    // INFO
+    // PERFIL
 
     profileUsername.innerText =
 
@@ -138,32 +168,31 @@ onAuthStateChanged(
 
     profileEmail.innerText =
 
-      data.email;
-
-    // DATA
+      data.email ||
+      "";
 
     if(data.createdAt) {
-
-      const date =
-
-        data.createdAt
-        .toDate();
 
       profileDate.innerText =
 
         "Entrou em: " +
 
-        date.toLocaleDateString(
+        data.createdAt
+        .toDate()
+        .toLocaleDateString(
           "pt-BR"
         );
 
     }
 
-    // VISITAS
-
     profileVisits.innerText =
 
       data.profileVisits || 0;
+
+    profileFriends.innerText =
+
+      data.friends
+      ?.length || 0;
 
     // POSTS
 
@@ -171,7 +200,10 @@ onAuthStateChanged(
 
       query(
 
-        collection(db, "posts"),
+        collection(
+          db,
+          "posts"
+        ),
 
         where(
           "userId",
@@ -182,17 +214,58 @@ onAuthStateChanged(
       );
 
     const postsSnap =
-      await getDocs(postsQuery);
+
+      await getDocs(
+        postsQuery
+      );
 
     profilePosts.innerText =
 
       postsSnap.size;
 
+    // COMUNIDADES
+
+    const communitiesQuery =
+
+      query(
+
+        collection(
+          db,
+          "communities"
+        ),
+
+        where(
+
+          "members",
+
+          "array-contains",
+
+          user.uid
+
+        )
+
+      );
+
+    const communitiesSnap =
+
+      await getDocs(
+        communitiesQuery
+      );
+
+    profileCommunities.innerText =
+
+      communitiesSnap.size;
+
+    // PEDIDOS
+    // (continua na Parte 2)
+
   }
 
 );
 
+// ========================================
 // LOGOUT
+// ========================================
 
 logoutButton.onclick =
 async () => {
@@ -204,7 +277,9 @@ async () => {
 
 };
 
+// ========================================
 // DELETAR CONTA
+// ========================================
 
 deleteAccountButton.onclick =
 async () => {
@@ -218,26 +293,25 @@ async () => {
   if(!confirmDelete)
     return;
 
-  const user =
-    auth.currentUser;
-
   try {
-
-    // REMOVE DOCUMENTO
 
     await deleteDoc(
 
       doc(
+
         db,
+
         "users",
-        user.uid
+
+        currentUser.uid
+
       )
 
     );
 
-    // REMOVE CONTA
-
-    await deleteUser(user);
+    await deleteUser(
+      currentUser
+    );
 
     alert(
       "Conta deletada."
@@ -250,8 +324,365 @@ async () => {
 
   catch(err) {
 
-    alert(err.message);
+    alert(
+      err.message
+    );
 
   }
 
 };
+
+// ========================================
+// PEDIDOS DE AMIZADE
+// ========================================
+
+import {
+
+  addDoc,
+  serverTimestamp
+
+}
+from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+async function loadFriendRequests() {
+
+  friendRequests.innerHTML = "";
+
+  const requestsQuery =
+
+    query(
+
+      collection(
+        db,
+        "friend_requests"
+      ),
+
+      where(
+        "toUserId",
+        "==",
+        currentUser.uid
+      ),
+
+      where(
+        "status",
+        "==",
+        "pending"
+      )
+
+    );
+
+  const requestsSnap =
+
+    await getDocs(
+      requestsQuery
+    );
+
+  if(requestsSnap.empty) {
+
+    friendRequests.innerHTML = `
+
+      <div class="community">
+
+        Nenhum pedido.
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+  for(const requestDoc of requestsSnap.docs) {
+
+    const request =
+      requestDoc.data();
+
+    const senderSnap =
+
+      await getDoc(
+
+        doc(
+
+          db,
+
+          "users",
+
+          request.fromUserId
+
+        )
+
+      );
+
+    const sender =
+
+      senderSnap.data();
+
+    const div =
+      document.createElement(
+        "div"
+      );
+
+    div.className =
+      "community";
+
+    div.innerHTML = `
+
+      <strong>
+
+        ${sender.username}
+
+      </strong>
+
+      <br><br>
+
+      <button
+        class="acceptFriend"
+      >
+
+        Aceitar
+
+      </button>
+
+      <button
+        class="rejectFriend"
+      >
+
+        Recusar
+
+      </button>
+
+    `;
+
+    div.querySelector(
+      ".acceptFriend"
+    ).onclick = async () => {
+
+      await addDoc(
+
+        collection(
+          db,
+          "friends"
+        ),
+
+        {
+
+          users: [
+
+            currentUser.uid,
+
+            request.fromUserId
+
+          ],
+
+          createdAt:
+            serverTimestamp()
+
+        }
+
+      );
+
+      await updateDoc(
+
+        doc(
+
+          db,
+
+          "friend_requests",
+
+          requestDoc.id
+
+        ),
+
+        {
+
+          status:
+            "accepted"
+
+        }
+
+      );
+
+      loadFriendRequests();
+      loadFriends();
+
+    };
+
+    div.querySelector(
+      ".rejectFriend"
+    ).onclick = async () => {
+
+      await deleteDoc(
+
+        doc(
+
+          db,
+
+          "friend_requests",
+
+          requestDoc.id
+
+        )
+
+      );
+
+      loadFriendRequests();
+
+    };
+
+    friendRequests.appendChild(
+      div
+    );
+
+  }
+
+}
+
+// ========================================
+// LISTA DE AMIGOS
+// ========================================
+
+async function loadFriends() {
+
+  friendsList.innerHTML = "";
+
+  const friendsQuery =
+
+    query(
+
+      collection(
+        db,
+        "friends"
+      ),
+
+      where(
+        "users",
+        "array-contains",
+        currentUser.uid
+      )
+
+    );
+
+  const friendsSnap =
+
+    await getDocs(
+      friendsQuery
+    );
+
+  if(friendsSnap.empty) {
+
+    friendsList.innerHTML = `
+
+      <div class="community">
+
+        Você ainda não possui amigos.
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+  for(const friendDoc of friendsSnap.docs) {
+
+    const friend =
+      friendDoc.data();
+
+    const friendId =
+
+      friend.users.find(
+
+        uid =>
+
+          uid !== currentUser.uid
+
+      );
+
+    const friendSnap =
+
+      await getDoc(
+
+        doc(
+          db,
+          "users",
+          friendId
+        )
+
+      );
+
+    if(!friendSnap.exists())
+      continue;
+
+    const friendData =
+      friendSnap.data();
+
+    const div =
+      document.createElement(
+        "div"
+      );
+
+    div.className =
+      "community";
+
+    div.innerHTML = `
+
+      👤
+
+      <a href="usuario.html?id=${friendId}">
+
+        ${friendData.username}
+
+      </a>
+
+      <button
+        class="messageFriend"
+      >
+
+        Conversar
+
+      </button>
+
+    `;
+
+    div.querySelector(
+      ".messageFriend"
+    ).onclick = () => {
+
+      location.href =
+
+        `chat.html?user=${friendId}`;
+
+    };
+
+    friendsList.appendChild(
+      div
+    );
+
+  }
+
+}
+
+// ========================================
+// INICIALIZA
+// ========================================
+
+onAuthStateChanged(
+
+  auth,
+
+  async (user) => {
+
+    if(!user)
+      return;
+
+    currentUser = user;
+
+    await loadFriendRequests();
+
+    await loadFriends();
+
+  }
+
+);
