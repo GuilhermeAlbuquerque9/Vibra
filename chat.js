@@ -405,7 +405,7 @@ function loadMessages() {
 
               :
 
-              "message friend";
+              "message friend-message";
 
             let hour = "";
 
