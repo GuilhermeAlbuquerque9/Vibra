@@ -1,5 +1,7 @@
 // usuario.js
 
+// IMPORTS
+
 import {
   auth,
   db
@@ -20,7 +22,11 @@ import {
   collection,
   query,
   where,
-  getDocs
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  serverTimestamp
 
 }
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
@@ -116,6 +122,9 @@ let currentData = null;
 let viewedUser = null;
 let viewedData = null;
 
+let friendshipStatus = "none";
+let requestId = null;
+
 // ========================================
 // AUTH
 // ========================================
@@ -137,9 +146,8 @@ onAuthStateChanged(
 
     currentUser = user;
 
-    // CARREGA USUÁRIO LOGADO
-
     const currentRef =
+
       doc(
         db,
         "users",
@@ -147,9 +155,7 @@ onAuthStateChanged(
       );
 
     const currentSnap =
-      await getDoc(
-        currentRef
-      );
+      await getDoc(currentRef);
 
     if(currentSnap.exists()) {
 
@@ -157,8 +163,6 @@ onAuthStateChanged(
         currentSnap.data();
 
     }
-
-    // VERIFICA ID
 
     if(!userId) {
 
@@ -169,9 +173,8 @@ onAuthStateChanged(
 
     }
 
-    // CARREGA PERFIL VISITADO
-
     const viewedRef =
+
       doc(
         db,
         "users",
@@ -179,9 +182,7 @@ onAuthStateChanged(
       );
 
     const viewedSnap =
-      await getDoc(
-        viewedRef
-      );
+      await getDoc(viewedRef);
 
     if(!viewedSnap.exists()) {
 
@@ -202,28 +203,18 @@ onAuthStateChanged(
     viewedData =
       viewedSnap.data();
 
-    // AVATAR
-
     userAvatar.src =
       "./assets/avatar.png";
-
-    // NOME
 
     userName.innerText =
 
       viewedData.username ||
-
       "Usuário";
-
-    // EMAIL
 
     userEmail.innerText =
 
       viewedData.email ||
-
       "";
-
-    // DATA
 
     if(viewedData.createdAt) {
 
@@ -247,14 +238,39 @@ onAuthStateChanged(
 
     }
 
+    // ========================================
     // AMIGOS
+    // Agora usa somente a coleção friends
+    // ========================================
+
+    const friendsQuery =
+
+      query(
+
+        collection(
+          db,
+          "friends"
+        ),
+
+        where(
+          "users",
+          "array-contains",
+          viewedUser
+        )
+
+      );
+
+    const friendsSnap =
+      await getDocs(
+        friendsQuery
+      );
 
     userFriends.innerText =
+      friendsSnap.size;
 
-      viewedData.friends
-      ?.length || 0;
-
+    // ========================================
     // COMUNIDADES
+    // ========================================
 
     const communitiesQuery =
 
@@ -266,33 +282,32 @@ onAuthStateChanged(
         ),
 
         where(
-
           "members",
-
           "array-contains",
-
           viewedUser
-
         )
 
       );
 
     const communitiesSnap =
-
       await getDocs(
         communitiesQuery
       );
 
     userCommunities.innerText =
-
       communitiesSnap.size;
 
+    // ========================================
     // POSTS
+    // ========================================
 
     await loadPosts();
 
-    // SISTEMA DE AMIZADE
-    // (continua na Parte 2)
+    // ========================================
+    // AMIZADE
+    // ========================================
+
+    await updateFriendButton();
 
   }
 
@@ -314,19 +329,14 @@ async function loadPosts() {
       ),
 
       where(
-
         "userId",
-
         "==",
-
         viewedUser
-
       )
 
     );
 
   const postsSnap =
-
     await getDocs(
       postsQuery
     );
@@ -407,19 +417,6 @@ async function loadPosts() {
 // SISTEMA DE AMIZADE
 // ========================================
 
-import {
-
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  serverTimestamp
-
-}
-from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
-
-let friendshipStatus = "none";
-let requestId = null;
-
 async function updateFriendButton() {
 
   // PRÓPRIO PERFIL
@@ -436,39 +433,62 @@ async function updateFriendButton() {
 
   }
 
+  // ========================================
   // JÁ SÃO AMIGOS?
+  // ========================================
 
   const friendsQuery =
 
     query(
 
-      collection(db, "friends"),
+      collection(
+        db,
+        "friends"
+      ),
 
-      where("users", "array-contains", currentUser.uid)
+      where(
+        "users",
+        "array-contains",
+        currentUser.uid
+      )
 
     );
 
   const friendsSnap =
-    await getDocs(friendsQuery);
+    await getDocs(
+      friendsQuery
+    );
 
-  let isFriend = false;
+  let isFriend =
+    false;
 
-  friendsSnap.forEach((docSnap) => {
+  friendsSnap.forEach(
 
-    const friend =
-      docSnap.data();
+    (friendDoc) => {
 
-    if(friend.users.includes(viewedUser)) {
+      const friend =
+        friendDoc.data();
 
-      isFriend = true;
+      if(
+
+        friend.users.includes(
+          viewedUser
+        )
+
+      ) {
+
+        isFriend = true;
+
+      }
 
     }
 
-  });
+  );
 
   if(isFriend) {
 
-    friendshipStatus = "friends";
+    friendshipStatus =
+      "friends";
 
     friendButton.innerText =
       "✓ Amigos";
@@ -480,33 +500,47 @@ async function updateFriendButton() {
 
   }
 
-  // PEDIDO ENVIADO?
+  // ========================================
+  // PEDIDO ENVIADO
+  // ========================================
 
   const sentQuery =
 
     query(
 
-      collection(db, "friend_requests"),
+      collection(
+        db,
+        "friend_requests"
+      ),
 
-      where("fromUserId", "==", currentUser.uid),
+      where(
+        "fromUserId",
+        "==",
+        currentUser.uid
+      ),
 
-      where("toUserId", "==", viewedUser)
+      where(
+        "toUserId",
+        "==",
+        viewedUser
+      )
 
     );
 
   const sentSnap =
-    await getDocs(sentQuery);
+    await getDocs(
+      sentQuery
+    );
 
   if(!sentSnap.empty) {
 
-    const request =
-      sentSnap.docs[0];
+    requestId =
+      sentSnap.docs[0].id;
 
     friendshipStatus =
-      request.data().status;
-
-    requestId =
-      request.id;
+      sentSnap.docs[0]
+      .data()
+      .status;
 
     if(friendshipStatus === "pending") {
 
@@ -522,33 +556,45 @@ async function updateFriendButton() {
 
   }
 
-  // PEDIDO RECEBIDO?
+  // ========================================
+  // PEDIDO RECEBIDO
+  // ========================================
 
   const receivedQuery =
 
     query(
 
-      collection(db, "friend_requests"),
+      collection(
+        db,
+        "friend_requests"
+      ),
 
-      where("fromUserId", "==", viewedUser),
+      where(
+        "fromUserId",
+        "==",
+        viewedUser
+      ),
 
-      where("toUserId", "==", currentUser.uid)
+      where(
+        "toUserId",
+        "==",
+        currentUser.uid
+      )
 
     );
 
   const receivedSnap =
-    await getDocs(receivedQuery);
+    await getDocs(
+      receivedQuery
+    );
 
   if(!receivedSnap.empty) {
 
-    const request =
-      receivedSnap.docs[0];
+    requestId =
+      receivedSnap.docs[0].id;
 
     friendshipStatus =
       "received";
-
-    requestId =
-      request.id;
 
     friendButton.innerText =
       "Aceitar pedido";
@@ -559,6 +605,8 @@ async function updateFriendButton() {
     return;
 
   }
+
+  // ========================================
 
   friendshipStatus =
     "none";
@@ -573,8 +621,6 @@ async function updateFriendButton() {
 
 }
 
-updateFriendButton();
-
 // ========================================
 // BOTÃO DE AMIZADE
 // ========================================
@@ -586,7 +632,7 @@ async () => {
 
   switch(friendshipStatus) {
 
-    // ENVIAR PEDIDO
+    // NOVO PEDIDO
 
     case "none":
 
@@ -617,7 +663,7 @@ async () => {
 
       break;
 
-    // CANCELAR PEDIDO
+    // CANCELAR
 
     case "pending":
 
@@ -641,7 +687,7 @@ async () => {
 
       break;
 
-    // ACEITAR PEDIDO
+    // ACEITAR
 
     case "received":
 
@@ -702,6 +748,34 @@ async () => {
 
   }
 
+  // Atualiza contador
+  // usando apenas a coleção friends
+
+  const newFriendsQuery =
+
+    query(
+
+      collection(
+        db,
+        "friends"
+      ),
+
+      where(
+        "users",
+        "array-contains",
+        viewedUser
+      )
+
+    );
+
+  const newFriendsSnap =
+    await getDocs(
+      newFriendsQuery
+    );
+
+  userFriends.innerText =
+    newFriendsSnap.size;
+
   await updateFriendButton();
 
 };
@@ -727,7 +801,6 @@ messageButton.onclick = () => {
   }
 
   location.href =
-
     `chat.html?user=${viewedUser}`;
 
 };
