@@ -107,8 +107,11 @@ const userId =
   params.get("id");
 
 // ========================================
-// USUÁRIO
+// USUÁRIOS
 // ========================================
+
+let currentUser = null;
+let currentData = null;
 
 let viewedUser = null;
 let viewedData = null;
@@ -121,9 +124,9 @@ onAuthStateChanged(
 
   auth,
 
-  async () => {
+  async (user) => {
 
-    if(!userId) {
+    if(!user) {
 
       location.href =
         "index.html";
@@ -132,17 +135,55 @@ onAuthStateChanged(
 
     }
 
-    const userRef =
+    currentUser = user;
+
+    // CARREGA USUÁRIO LOGADO
+
+    const currentRef =
+      doc(
+        db,
+        "users",
+        user.uid
+      );
+
+    const currentSnap =
+      await getDoc(
+        currentRef
+      );
+
+    if(currentSnap.exists()) {
+
+      currentData =
+        currentSnap.data();
+
+    }
+
+    // VERIFICA ID
+
+    if(!userId) {
+
+      location.href =
+        "buscar.html";
+
+      return;
+
+    }
+
+    // CARREGA PERFIL VISITADO
+
+    const viewedRef =
       doc(
         db,
         "users",
         userId
       );
 
-    const snap =
-      await getDoc(userRef);
+    const viewedSnap =
+      await getDoc(
+        viewedRef
+      );
 
-    if(!snap.exists()) {
+    if(!viewedSnap.exists()) {
 
       alert(
         "Usuário não encontrado."
@@ -159,7 +200,7 @@ onAuthStateChanged(
       userId;
 
     viewedData =
-      snap.data();
+      viewedSnap.data();
 
     // AVATAR
 
@@ -182,20 +223,17 @@ onAuthStateChanged(
 
       "";
 
-    // DATA DE ENTRADA
+    // DATA
 
     if(viewedData.createdAt) {
-
-      const date =
-
-        viewedData.createdAt
-        .toDate();
 
       userJoined.innerText =
 
         "Entrou em: " +
 
-        date.toLocaleDateString(
+        viewedData.createdAt
+        .toDate()
+        .toLocaleDateString(
           "pt-BR"
         );
 
@@ -218,7 +256,7 @@ onAuthStateChanged(
 
     // COMUNIDADES
 
-    const communityQuery =
+    const communitiesQuery =
 
       query(
 
@@ -239,73 +277,81 @@ onAuthStateChanged(
 
       );
 
-    const communitySnap =
+    const communitiesSnap =
 
       await getDocs(
-        communityQuery
+        communitiesQuery
       );
 
     userCommunities.innerText =
 
-      communitySnap.size;
+      communitiesSnap.size;
 
-    // Os posts serão carregados
-    // na Parte 2.
+    // POSTS
+
+    await loadPosts();
+
+    // SISTEMA DE AMIZADE
+    // (continua na Parte 2)
 
   }
 
 );
+
 // ========================================
-// POSTS DO USUÁRIO
+// POSTS
 // ========================================
 
-const postsQuery =
+async function loadPosts() {
 
-  query(
+  const postsQuery =
 
-    collection(
-      db,
-      "posts"
-    ),
+    query(
 
-    where(
+      collection(
+        db,
+        "posts"
+      ),
 
-      "userId",
+      where(
 
-      "==",
+        "userId",
 
-      viewedUser
+        "==",
 
-    )
+        viewedUser
 
-  );
+      )
 
-const postsSnap =
+    );
 
-  await getDocs(
-    postsQuery
-  );
+  const postsSnap =
 
-userPosts.innerText =
-  postsSnap.size;
+    await getDocs(
+      postsQuery
+    );
 
-postsContainer.innerHTML = "";
+  userPosts.innerText =
+    postsSnap.size;
 
-if(postsSnap.empty) {
+  postsContainer.innerHTML =
+    "";
 
-  postsContainer.innerHTML = `
+  if(postsSnap.empty) {
 
-    <div class="community">
+    postsContainer.innerHTML = `
 
-      Este usuário ainda não publicou nada.
+      <div class="community">
 
-    </div>
+        Este usuário ainda não publicou nada.
 
-  `;
+      </div>
 
-}
+    `;
 
-else {
+    return;
+
+  }
 
   postsSnap.forEach(
 
@@ -358,18 +404,305 @@ else {
 }
 
 // ========================================
+// SISTEMA DE AMIZADE
+// ========================================
+
+import {
+
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  serverTimestamp
+
+}
+from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+let friendshipStatus = "none";
+let requestId = null;
+
+async function updateFriendButton() {
+
+  // PRÓPRIO PERFIL
+
+  if(currentUser.uid === viewedUser) {
+
+    friendButton.style.display =
+      "none";
+
+    messageButton.style.display =
+      "none";
+
+    return;
+
+  }
+
+  // JÁ SÃO AMIGOS?
+
+  const friendsQuery =
+
+    query(
+
+      collection(db, "friends"),
+
+      where("users", "array-contains", currentUser.uid)
+
+    );
+
+  const friendsSnap =
+    await getDocs(friendsQuery);
+
+  let isFriend = false;
+
+  friendsSnap.forEach((docSnap) => {
+
+    const friend =
+      docSnap.data();
+
+    if(friend.users.includes(viewedUser)) {
+
+      isFriend = true;
+
+    }
+
+  });
+
+  if(isFriend) {
+
+    friendshipStatus = "friends";
+
+    friendButton.innerText =
+      "✓ Amigos";
+
+    messageButton.disabled =
+      false;
+
+    return;
+
+  }
+
+  // PEDIDO ENVIADO?
+
+  const sentQuery =
+
+    query(
+
+      collection(db, "friend_requests"),
+
+      where("fromUserId", "==", currentUser.uid),
+
+      where("toUserId", "==", viewedUser)
+
+    );
+
+  const sentSnap =
+    await getDocs(sentQuery);
+
+  if(!sentSnap.empty) {
+
+    const request =
+      sentSnap.docs[0];
+
+    friendshipStatus =
+      request.data().status;
+
+    requestId =
+      request.id;
+
+    if(friendshipStatus === "pending") {
+
+      friendButton.innerText =
+        "Cancelar pedido";
+
+      messageButton.disabled =
+        true;
+
+      return;
+
+    }
+
+  }
+
+  // PEDIDO RECEBIDO?
+
+  const receivedQuery =
+
+    query(
+
+      collection(db, "friend_requests"),
+
+      where("fromUserId", "==", viewedUser),
+
+      where("toUserId", "==", currentUser.uid)
+
+    );
+
+  const receivedSnap =
+    await getDocs(receivedQuery);
+
+  if(!receivedSnap.empty) {
+
+    const request =
+      receivedSnap.docs[0];
+
+    friendshipStatus =
+      "received";
+
+    requestId =
+      request.id;
+
+    friendButton.innerText =
+      "Aceitar pedido";
+
+    messageButton.disabled =
+      true;
+
+    return;
+
+  }
+
+  friendshipStatus =
+    "none";
+
+  requestId = null;
+
+  friendButton.innerText =
+    "Adicionar amigo";
+
+  messageButton.disabled =
+    true;
+
+}
+
+updateFriendButton();
+
+// ========================================
 // BOTÃO DE AMIZADE
 // ========================================
 
-friendButton.onclick = () => {
+friendButton.onclick =
+async () => {
 
   playClick();
 
-  alert(
+  switch(friendshipStatus) {
 
-    "O sistema de amizade será implementado na próxima atualização."
+    // ENVIAR PEDIDO
 
-  );
+    case "none":
+
+      await addDoc(
+
+        collection(
+          db,
+          "friend_requests"
+        ),
+
+        {
+
+          fromUserId:
+            currentUser.uid,
+
+          toUserId:
+            viewedUser,
+
+          status:
+            "pending",
+
+          createdAt:
+            serverTimestamp()
+
+        }
+
+      );
+
+      break;
+
+    // CANCELAR PEDIDO
+
+    case "pending":
+
+      if(requestId) {
+
+        await deleteDoc(
+
+          doc(
+
+            db,
+
+            "friend_requests",
+
+            requestId
+
+          )
+
+        );
+
+      }
+
+      break;
+
+    // ACEITAR PEDIDO
+
+    case "received":
+
+      await addDoc(
+
+        collection(
+          db,
+          "friends"
+        ),
+
+        {
+
+          users: [
+
+            currentUser.uid,
+
+            viewedUser
+
+          ],
+
+          createdAt:
+            serverTimestamp()
+
+        }
+
+      );
+
+      await updateDoc(
+
+        doc(
+
+          db,
+
+          "friend_requests",
+
+          requestId
+
+        ),
+
+        {
+
+          status:
+            "accepted"
+
+        }
+
+      );
+
+      break;
+
+    case "friends":
+
+      alert(
+        "Vocês já são amigos."
+      );
+
+      break;
+
+  }
+
+  await updateFriendButton();
 
 };
 
@@ -381,10 +714,20 @@ messageButton.onclick = () => {
 
   playClick();
 
-  alert(
+  if(friendshipStatus !== "friends") {
 
-    "O chat será implementado em breve."
+    alert(
 
-  );
+      "Você precisa ser amigo deste usuário para conversar."
+
+    );
+
+    return;
+
+  }
+
+  location.href =
+
+    `chat.html?user=${viewedUser}`;
 
 };
