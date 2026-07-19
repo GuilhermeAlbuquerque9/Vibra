@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Chat • Vibra™</title>
+
+<link rel="icon" href="./assets/Vibra_icon.png">
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<audio id="clickSound" src="./assets/click.wav"></audio>
+
+<div class="window">
+
+    <!-- ====================================== -->
+    <!-- SIDEBAR -->
+    <!-- ====================================== -->
+
+    <aside class="chat-sidebar">
+
+        <div class="sidebar-header">
+
+            <img
+                src="./assets/Vibra_logo.png"
+                alt="Vibra™"
+                class="sidebar-logo">
+
+            <h2>Conversas</h2>
+
+        </div>
+
+        <div class="sidebar-actions">
+
+            <button
+                id="backButton">
+
+                ← Voltar
+
+            </button>
+
+        </div>
+
+        <div class="friends-title">
+
+            👥 Amigos
+
+        </div>
+
+        <div
+            id="friendsList"
+            class="friends-list">
+
+            <!-- chat.js -->
+
+        </div>
+
+    </aside>
+
+    <!-- ====================================== -->
+    <!-- CHAT -->
+    <!-- ====================================== -->
+
+    <main class="chat-main">
+
+        <header class="chat-header">
+
+            <div class="chat-user">
+
+                <img
+                    id="chatAvatar"
+                    src="./assets/avatar.png"
+                    alt="Avatar">
+
+                <div>
+
+                    <h2
+                        id="chatUsername">
+
+                        Selecione um amigo
+
+                    </h2>
+
+                    <span
+                        id="chatStatus">
+
+                        Offline
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </header>
+
+        <section
+            id="messages"
+            class="messages">
+
+            <div class="empty-chat">
+
+                Selecione um amigo para começar a conversar.
+
+            </div>
+
+        </section>
+
+        <footer class="chat-footer">
+
+            <input
+
+                type="text"
+
+                id="messageInput"
+
+                placeholder="Digite uma mensagem..."
+
+                autocomplete="off"
+
+                disabled
+
+            >
+
+            <button
+                id="sendButton"
+                disabled>
+
+                Enviar
+
+            </button>
+
+        </footer>
+
+    </main>
+
+</div>
+
+<script
+type="module"
+src="chat.js"></script>
+
+</body>
+</html>
