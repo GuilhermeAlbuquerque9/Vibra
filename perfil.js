@@ -50,6 +50,9 @@ const profileEmail =
 const profileDate =
   $("profileDate");
 
+const profileAbout =
+  $("profileAbout");
+
 const profileVisits =
   $("profileVisits");
 
@@ -161,7 +164,9 @@ onAuthStateChanged(
     const data =
       snap.data();
 
+    // ========================================
     // PERFIL
+    // ========================================
 
     profileUsername.innerText =
 
@@ -187,11 +192,17 @@ onAuthStateChanged(
 
     }
 
+    profileAbout.innerText =
+
+      data.about ||
+
+      "Este usuário ainda não escreveu nada.";
+
     profileVisits.innerText =
 
       data.profileVisits || 0;
 
-    // ========================================
+      // ========================================
     // AMIGOS
     // Agora usa SOMENTE a coleção "friends"
     // ========================================
@@ -522,6 +533,7 @@ async function loadFriendRequests() {
       );
 
       await loadFriendRequests();
+
       await loadFriends();
 
       profileFriends.innerText =
@@ -586,10 +598,9 @@ async function loadFriends() {
     );
 
   const friendsSnap =
-    await getDocs(friendsQuery);
-
-  // Atualiza o contador usando
-  // somente a coleção friends
+    await getDocs(
+      friendsQuery
+    );
 
   profileFriends.innerText =
     friendsSnap.size;
