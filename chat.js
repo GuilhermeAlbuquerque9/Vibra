@@ -30,73 +30,31 @@ import {
 
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
-// ========================================
-// ELEMENTOS
-// ========================================
+/* ==========================================
+   ELEMENTOS
+========================================== */
 
-const $ = (id) =>
-  document.getElementById(id);
+const $ = id => document.getElementById(id);
 
-const friendsList =
-  $("friendsList");
+const friendsList = $("friendsList");
 
-const chatAvatar =
-  $("chatAvatar");
+const chatAvatar = $("chatAvatar");
 
-const chatUsername =
-  $("chatUsername");
+const chatUsername = $("chatUsername");
 
-const chatStatus =
-  $("chatStatus");
+const chatStatus = $("chatStatus");
 
-const messages =
-  $("messages");
+const messages = $("messages");
 
-const messageInput =
-  $("messageInput");
+const messageInput = $("messageInput");
 
-const sendButton =
-  $("sendButton");
+const sendButton = $("sendButton");
 
-const backButton =
-  $("backButton");
+const clickSound = $("clickSound");
 
-const clickSound =
-  $("clickSound");
-
-// ========================================
-// SOM
-// ========================================
-
-function playClick() {
-
-  if(!clickSound)
-    return;
-
-  clickSound.currentTime = 0;
-  clickSound.play();
-
-}
-
-document.addEventListener(
-
-  "click",
-
-  (event) => {
-
-    if(event.target.tagName === "BUTTON") {
-
-      playClick();
-
-    }
-
-  }
-
-);
-
-// ========================================
-// VARIÁVEIS
-// ========================================
+/* ==========================================
+   VARIÁVEIS
+========================================== */
 
 let currentUser = null;
 
@@ -108,20 +66,50 @@ let currentChatId = null;
 
 let unsubscribeMessages = null;
 
-// ========================================
-// AUTH
-// ========================================
+/* ==========================================
+   SOM
+========================================== */
+
+function playClick() {
+
+  if(!clickSound)
+    return;
+
+  clickSound.currentTime = 0;
+
+  clickSound.play();
+
+}
+
+document.addEventListener(
+
+  "click",
+
+  event => {
+
+    if(event.target.tagName === "BUTTON") {
+
+      playClick();
+
+    }
+
+  }
+
+);
+
+/* ==========================================
+   LOGIN
+========================================== */
 
 onAuthStateChanged(
 
   auth,
 
-  async (user) => {
+  async user => {
 
-    if(!user) {
+    if(!user){
 
-      location.href =
-        "index.html";
+      location.href="index.html";
 
       return;
 
@@ -135,56 +123,53 @@ onAuthStateChanged(
 
 );
 
-// ========================================
-// CARREGAR AMIGOS
-// ========================================
+/* ==========================================
+   LISTA DE AMIGOS
+========================================== */
 
-async function loadFriends() {
+async function loadFriends(){
 
   friendsList.innerHTML = "";
 
-  const friendsQuery =
+  const friendsQuery = query(
 
-    query(
+    collection(db,"friends"),
 
-      collection(
-        db,
-        "friends"
-      ),
+    where(
 
-      where(
-        "users",
-        "array-contains",
-        currentUser.uid
-      )
+      "users",
 
-    );
+      "array-contains",
+
+      currentUser.uid
+
+    )
+
+  );
 
   const friendsSnap =
-    await getDocs(
-      friendsQuery
-    );
 
-  if(friendsSnap.empty) {
+    await getDocs(friendsQuery);
+
+  if(friendsSnap.empty){
 
     friendsList.innerHTML = `
 
-      <div class="community">
+<div class="community">
 
-        Você ainda não possui amigos.
+Você ainda não possui amigos.
 
-      </div>
+</div>
 
-    `;
+`;
 
     return;
 
   }
 
-  for(const friendDoc of friendsSnap.docs) {
+  for(const friendDoc of friendsSnap.docs){
 
-    const friend =
-      friendDoc.data();
+    const friend = friendDoc.data();
 
     const friendId =
 
@@ -204,9 +189,13 @@ async function loadFriends() {
       await getDoc(
 
         doc(
+
           db,
+
           "users",
+
           friendId
+
         )
 
       );
@@ -214,98 +203,92 @@ async function loadFriends() {
     if(!userSnap.exists())
       continue;
 
-    const data =
-      userSnap.data();
+    const data = userSnap.data();
 
     const div =
-      document.createElement(
-        "div"
-      );
 
-    div.className =
-      "friend";
+      document.createElement("div");
+
+    div.className = "friend";
 
     div.innerHTML = `
 
-      <img
-        src="./assets/avatar.png">
+<img
+src="./assets/avatar.png"
+alt="Avatar"
+>
 
-      <div>
+<div class="friend-info">
 
-        <strong>
+<strong>
 
-          ${data.username}
+${data.username}
 
-        </strong>
+</strong>
 
-        <br>
+<span>
 
-        <span>
+${data.status || "Offline"}
 
-          ${data.status || "Offline"}
+</span>
 
-        </span>
+</div>
 
-      </div>
+`;
 
-    `;
+    div.onclick = () => {
 
-    div.onclick =
-      () => {
+      document
 
-        openChat(
-          friendId,
-          data
+        .querySelectorAll(".friend")
+
+        .forEach(
+
+          item =>
+
+            item.classList.remove("active")
+
         );
 
-      };
+      div.classList.add("active");
 
-    friendsList.appendChild(
-      div
-    );
+      openChat(
+
+        friendId,
+
+        data
+
+      );
+
+    };
+
+    friendsList.appendChild(div);
 
   }
 
 }
 
-// ========================================
-// ABRIR CONVERSA
-// ========================================
+/* ==========================================
+   ABRIR CONVERSA
+========================================== */
 
-async function openChat(
+function openChat(
 
   friendId,
   friendData
 
-) {
+){
 
-  selectedFriend =
-    friendId;
+  selectedFriend = friendId;
 
-  selectedFriendData =
-    friendData;
-
-  chatAvatar.src =
-    "./assets/avatar.png";
-
-  chatUsername.innerText =
-    friendData.username;
-
-  chatStatus.innerText =
-    friendData.status ||
-    "Offline";
-
-  messageInput.disabled =
-    false;
-
-  sendButton.disabled =
-    false;
+  selectedFriendData = friendData;
 
   currentChatId =
 
     [
 
       currentUser.uid,
+
       friendId
 
     ]
@@ -314,7 +297,22 @@ async function openChat(
 
     .join("_");
 
-  if(unsubscribeMessages) {
+  chatAvatar.src =
+    "./assets/avatar.png";
+
+  chatUsername.innerText =
+    friendData.username;
+
+  chatStatus.innerText =
+    friendData.status || "Offline";
+
+  messageInput.disabled = false;
+
+  sendButton.disabled = false;
+
+  messageInput.focus();
+
+  if(unsubscribeMessages){
 
     unsubscribeMessages();
 
@@ -324,11 +322,11 @@ async function openChat(
 
 }
 
-// ========================================
-// MENSAGENS
-// ========================================
+/* ==========================================
+   CARREGAR MENSAGENS
+========================================== */
 
-function loadMessages() {
+function loadMessages(){
 
   messages.innerHTML = "";
 
@@ -337,19 +335,29 @@ function loadMessages() {
     query(
 
       collection(
+
         db,
+
         "private_messages"
+
       ),
 
       where(
+
         "chatId",
+
         "==",
+
         currentChatId
+
       ),
 
       orderBy(
+
         "createdAt",
+
         "asc"
+
       )
 
     );
@@ -360,21 +368,21 @@ function loadMessages() {
 
       messagesQuery,
 
-      (snapshot) => {
+      snapshot => {
 
         messages.innerHTML = "";
 
-        if(snapshot.empty) {
+        if(snapshot.empty){
 
           messages.innerHTML = `
 
-            <div class="empty-chat">
+<div class="empty-chat">
 
-              Ainda não há mensagens.
+Ainda não há mensagens nesta conversa.
 
-            </div>
+</div>
 
-          `;
+`;
 
           return;
 
@@ -382,48 +390,53 @@ function loadMessages() {
 
         snapshot.forEach(
 
-          (messageDoc) => {
+          messageDoc => {
 
             const message =
               messageDoc.data();
 
-            const mine =
+            const isMe =
 
               message.fromUserId ===
               currentUser.uid;
 
+            const author =
+
+              isMe
+              ? "Você"
+              : selectedFriendData.username;
+
+            const time =
+
+              message.createdAt?.toDate()
+
+              .toLocaleTimeString(
+
+                "pt-BR",
+
+                {
+
+                  hour:"2-digit",
+
+                  minute:"2-digit"
+
+                }
+
+              ) ?? "";
+
             const div =
-document.createElement("div");
 
-const isMe =
-message.fromUserId === currentUser.uid;
+              document.createElement("div");
 
-div.className =
-isMe
-?
-"message me"
-:
-"message friend-message";
+            div.className =
 
-const time =
-message.createdAt?.toDate()
-.toLocaleTimeString(
-"pt-BR",
-{
-hour:"2-digit",
-minute:"2-digit"
-}
-)
-?? "";
+              isMe
 
-const author =
-isMe
-?
-"Você"
-:
-selectedFriendData.username;
+              ? "message me"
 
-div.innerHTML = `
+              : "message friend-message";
+
+            div.innerHTML = `
 
 <div class="message-header">
 
@@ -453,15 +466,14 @@ div.innerHTML = `
 
 `;
 
-messages.appendChild(div);
-              div
-            );
+            messages.appendChild(div);
 
           }
 
         );
 
         messages.scrollTop =
+
           messages.scrollHeight;
 
       }
@@ -470,26 +482,30 @@ messages.appendChild(div);
 
 }
 
-// ========================================
-// ENVIAR MENSAGEM
-// ========================================
+/* ==========================================
+   ENVIAR MENSAGEM
+========================================== */
 
-async function sendMessage() {
+async function sendMessage(){
+
+  if(!selectedFriend)
+    return;
 
   const text =
+
     messageInput.value.trim();
 
   if(!text)
     return;
 
-  if(!selectedFriend)
-    return;
-
   await addDoc(
 
     collection(
+
       db,
+
       "private_messages"
+
     ),
 
     {
@@ -518,51 +534,46 @@ async function sendMessage() {
 
 }
 
-// ========================================
-// BOTÃO ENVIAR
-// ========================================
+/* ==========================================
+   BOTÃO ENVIAR
+========================================== */
 
-sendButton.onclick =
-  sendMessage;
+sendButton.addEventListener(
 
-// ========================================
-// ENTER
-// ========================================
+  "click",
 
-messageInput.addEventListener(
+  () => {
 
-  "keydown",
-
-  (event) => {
-
-    if(event.key === "Enter") {
-
-      event.preventDefault();
-
-      sendMessage();
-
-    }
+    sendMessage();
 
   }
 
 );
 
-// ========================================
-// BOTÃO VOLTAR
-// ========================================
+/* ==========================================
+   ENTER
+========================================== */
 
-backButton.onclick = () => {
+messageInput.addEventListener(
 
-  playClick();
+  "keydown",
 
-  location.href =
-    "perfil.html";
+  event => {
 
-};
+    if(event.key !== "Enter")
+      return;
 
-// ========================================
-// LIMPEZA
-// ========================================
+    event.preventDefault();
+
+    sendMessage();
+
+  }
+
+);
+
+/* ==========================================
+   LIMPEZA
+========================================== */
 
 window.addEventListener(
 
@@ -570,7 +581,7 @@ window.addEventListener(
 
   () => {
 
-    if(unsubscribeMessages) {
+    if(unsubscribeMessages){
 
       unsubscribeMessages();
 
