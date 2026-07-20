@@ -1,6 +1,8 @@
 // usuario.js
 
+// ========================================
 // IMPORTS
+// ========================================
 
 import {
   auth,
@@ -44,11 +46,11 @@ const userAvatar =
 const userName =
   $("userName");
 
-const userEmail =
-  $("userEmail");
-
 const userJoined =
   $("userJoined");
+
+const userAbout =
+  $("userAbout");
 
 const userPosts =
   $("userPosts");
@@ -80,6 +82,7 @@ function playClick() {
   if(!clickSound) return;
 
   clickSound.currentTime = 0;
+
   clickSound.play();
 
 }
@@ -105,6 +108,7 @@ document.addEventListener(
 // ========================================
 
 const params =
+
   new URLSearchParams(
     location.search
   );
@@ -117,12 +121,15 @@ const userId =
 // ========================================
 
 let currentUser = null;
+
 let currentData = null;
 
 let viewedUser = null;
+
 let viewedData = null;
 
 let friendshipStatus = "none";
+
 let requestId = null;
 
 // ========================================
@@ -135,7 +142,7 @@ onAuthStateChanged(
 
   async (user) => {
 
-    if(!user) {
+    if(!user){
 
       location.href =
         "index.html";
@@ -155,16 +162,19 @@ onAuthStateChanged(
       );
 
     const currentSnap =
-      await getDoc(currentRef);
 
-    if(currentSnap.exists()) {
+      await getDoc(
+        currentRef
+      );
+
+    if(currentSnap.exists()){
 
       currentData =
         currentSnap.data();
 
     }
 
-    if(!userId) {
+    if(!userId){
 
       location.href =
         "buscar.html";
@@ -182,9 +192,12 @@ onAuthStateChanged(
       );
 
     const viewedSnap =
-      await getDoc(viewedRef);
 
-    if(!viewedSnap.exists()) {
+      await getDoc(
+        viewedRef
+      );
+
+    if(!viewedSnap.exists()){
 
       alert(
         "Usuário não encontrado."
@@ -211,12 +224,7 @@ onAuthStateChanged(
       viewedData.username ||
       "Usuário";
 
-    userEmail.innerText =
-
-      viewedData.email ||
-      "";
-
-    if(viewedData.createdAt) {
+    if(viewedData.createdAt){
 
       userJoined.innerText =
 
@@ -230,13 +238,19 @@ onAuthStateChanged(
 
     }
 
-    else {
+    else{
 
       userJoined.innerText =
 
         "Entrou em: desconhecido";
 
     }
+
+    userAbout.innerText =
+
+      viewedData.about ||
+
+      "Este usuário ainda não escreveu nada.";
 
     // ========================================
     // AMIGOS
@@ -261,18 +275,20 @@ onAuthStateChanged(
       );
 
     const friendsSnap =
+
       await getDocs(
         friendsQuery
       );
 
     userFriends.innerText =
+
       friendsSnap.size;
 
     // ========================================
     // COMUNIDADES
     // ========================================
 
-    const communitiesQuery =
+      const communitiesQuery =
 
       query(
 
@@ -290,11 +306,13 @@ onAuthStateChanged(
       );
 
     const communitiesSnap =
+
       await getDocs(
         communitiesQuery
       );
 
     userCommunities.innerText =
+
       communitiesSnap.size;
 
     // ========================================
@@ -337,17 +355,18 @@ async function loadPosts() {
     );
 
   const postsSnap =
+
     await getDocs(
       postsQuery
     );
 
   userPosts.innerText =
+
     postsSnap.size;
 
-  postsContainer.innerHTML =
-    "";
+  postsContainer.innerHTML = "";
 
-  if(postsSnap.empty) {
+  if(postsSnap.empty){
 
     postsContainer.innerHTML = `
 
@@ -404,8 +423,9 @@ async function loadPosts() {
 
       `;
 
-      postsContainer
-      .appendChild(div);
+      postsContainer.appendChild(
+        div
+      );
 
     }
 
@@ -421,7 +441,7 @@ async function updateFriendButton() {
 
   // PRÓPRIO PERFIL
 
-  if(currentUser.uid === viewedUser) {
+  if(currentUser.uid === viewedUser){
 
     friendButton.style.display =
       "none";
@@ -455,12 +475,12 @@ async function updateFriendButton() {
     );
 
   const friendsSnap =
+
     await getDocs(
       friendsQuery
     );
 
-  let isFriend =
-    false;
+  let isFriend = false;
 
   friendsSnap.forEach(
 
@@ -475,7 +495,7 @@ async function updateFriendButton() {
           viewedUser
         )
 
-      ) {
+      ){
 
         isFriend = true;
 
@@ -485,7 +505,7 @@ async function updateFriendButton() {
 
   );
 
-  if(isFriend) {
+  if(isFriend){
 
     friendshipStatus =
       "friends";
@@ -528,11 +548,12 @@ async function updateFriendButton() {
     );
 
   const sentSnap =
+
     await getDocs(
       sentQuery
     );
 
-  if(!sentSnap.empty) {
+  if(!sentSnap.empty){
 
     requestId =
       sentSnap.docs[0].id;
@@ -542,7 +563,7 @@ async function updateFriendButton() {
       .data()
       .status;
 
-    if(friendshipStatus === "pending") {
+    if(friendshipStatus === "pending"){
 
       friendButton.innerText =
         "Cancelar pedido";
@@ -584,11 +605,12 @@ async function updateFriendButton() {
     );
 
   const receivedSnap =
+
     await getDocs(
       receivedQuery
     );
 
-  if(!receivedSnap.empty) {
+  if(!receivedSnap.empty){
 
     requestId =
       receivedSnap.docs[0].id;
@@ -607,6 +629,8 @@ async function updateFriendButton() {
   }
 
   // ========================================
+  // SEM AMIZADE
+  // ========================================
 
   friendshipStatus =
     "none";
@@ -614,7 +638,7 @@ async function updateFriendButton() {
   requestId = null;
 
   friendButton.innerText =
-    "Adicionar amigo";
+    "➕ Enviar pedido de amizade";
 
   messageButton.disabled =
     true;
@@ -630,9 +654,11 @@ async () => {
 
   playClick();
 
-  switch(friendshipStatus) {
+  switch(friendshipStatus){
 
+    // ====================================
     // NOVO PEDIDO
+    // ====================================
 
     case "none":
 
@@ -663,22 +689,20 @@ async () => {
 
       break;
 
-    // CANCELAR
+    // ====================================
+    // CANCELAR PEDIDO
+    // ====================================
 
     case "pending":
 
-      if(requestId) {
+      if(requestId){
 
         await deleteDoc(
 
           doc(
-
             db,
-
             "friend_requests",
-
             requestId
-
           )
 
         );
@@ -687,7 +711,9 @@ async () => {
 
       break;
 
-    // ACEITAR
+    // ====================================
+    // ACEITAR PEDIDO
+    // ====================================
 
     case "received":
 
@@ -718,13 +744,9 @@ async () => {
       await updateDoc(
 
         doc(
-
           db,
-
           "friend_requests",
-
           requestId
-
         ),
 
         {
@@ -738,6 +760,10 @@ async () => {
 
       break;
 
+    // ====================================
+    // JÁ SÃO AMIGOS
+    // ====================================
+
     case "friends":
 
       alert(
@@ -749,7 +775,6 @@ async () => {
   }
 
   // Atualiza contador
-  // usando apenas a coleção friends
 
   const newFriendsQuery =
 
@@ -769,6 +794,7 @@ async () => {
     );
 
   const newFriendsSnap =
+
     await getDocs(
       newFriendsQuery
     );
@@ -788,7 +814,7 @@ messageButton.onclick = () => {
 
   playClick();
 
-  if(friendshipStatus !== "friends") {
+  if(friendshipStatus !== "friends"){
 
     alert(
 
@@ -801,6 +827,7 @@ messageButton.onclick = () => {
   }
 
   location.href =
+
     `chat.html?user=${viewedUser}`;
 
 };
