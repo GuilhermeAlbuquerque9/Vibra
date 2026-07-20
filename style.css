@@ -512,16 +512,8 @@ footer {
 }
 
 /* ==========================================
-   CHAT
+   VIBRA MESSENGER
 ========================================== */
-
-.chat-main {
-
-  display: flex;
-
-  flex-direction: column;
-
-}
 
 .chat-header {
 
@@ -531,9 +523,9 @@ footer {
 
   padding: 15px;
 
-  border-bottom: 1px solid #c9d7cb;
+  border-bottom: 1px solid #d8e5da;
 
-  background: #f5f9f6;
+  background: linear-gradient(to bottom,#ffffff,#eef6f1);
 
 }
 
@@ -543,18 +535,20 @@ footer {
 
   align-items: center;
 
-  gap: 12px;
+  gap: 15px;
 
 }
 
 .chat-user img {
 
-  width: 55px;
-  height: 55px;
+  width: 64px;
+  height: 64px;
 
-  border-radius: 8px;
+  border-radius: 10px;
 
   border: 1px solid #c9d7cb;
+
+  background: white;
 
 }
 
@@ -562,7 +556,7 @@ footer {
 
   color: #2458d3;
 
-  margin-bottom: 3px;
+  margin-bottom: 4px;
 
 }
 
@@ -575,66 +569,92 @@ footer {
 }
 
 /* ==========================================
-   MENSAGENS
+   CONVERSA
 ========================================== */
 
 .messages {
 
-  flex: 1;
+  height: 520px;
 
   overflow-y: auto;
 
-  padding: 20px;
+  padding: 15px;
 
-  background: #edf4ef;
+  background: #f8fbf9;
 
 }
 
 .empty-chat {
 
-  color: #666;
+  margin-top: 120px;
 
   text-align: center;
 
-  margin-top: 50px;
+  color: #666;
 
 }
 
 /* ==========================================
-   BALÕES
+   MENSAGEM
 ========================================== */
 
 .message {
 
-  max-width: 70%;
-
-  padding: 10px 14px;
-
-  margin-bottom: 12px;
-
-  border-radius: 10px;
-
-  word-wrap: break-word;
-
-}
-
-.me {
-
-  margin-left: auto;
-
-  background: #d7f0dc;
-
-  border: 1px solid #b7dcbc;
-
-}
-
-.friend-message {
-
-  margin-right: auto;
+  margin-bottom: 14px;
 
   background: white;
 
-  border: 1px solid #c9d7cb;
+  border: 1px solid #d7e3d9;
+
+}
+
+.message-header {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 8px 12px;
+
+  background: #edf5ef;
+
+  border-bottom: 1px solid #d7e3d9;
+
+}
+
+.me .message-header {
+
+  background: #e7f6ea;
+
+}
+
+.message-author {
+
+  font-weight: bold;
+
+  color: #2458d3;
+
+}
+
+.me .message-author {
+
+  color: #57b36d;
+
+}
+
+.message-time {
+
+  font-size: 12px;
+
+  color: #777;
+
+}
+
+.message-body {
+
+  padding: 12px;
 
 }
 
@@ -642,17 +662,9 @@ footer {
 
   white-space: pre-wrap;
 
-}
+  word-break: break-word;
 
-.message-time {
-
-  margin-top: 5px;
-
-  text-align: right;
-
-  color: #777;
-
-  font-size: 11px;
+  line-height: 1.5;
 
 }
 
@@ -668,9 +680,9 @@ footer {
 
   padding: 15px;
 
-  border-top: 1px solid #c9d7cb;
+  border-top: 1px solid #d8e5da;
 
-  background: #f5f9f6;
+  background: #f7fbf8;
 
 }
 
@@ -678,11 +690,19 @@ footer {
 
   flex: 1;
 
-  height: 36px;
+  height: 34px;
 
   padding: 0 10px;
 
-  border: 1px solid #aaa;
+  border: 1px solid #999;
+
+  font-size: 14px;
+
+}
+
+.chat-footer input:disabled {
+
+  background: #efefef;
 
 }
 
@@ -690,20 +710,11 @@ footer {
 
   width: 110px;
 
-}
-
-/* ==========================================
-   BOTÕES
-========================================== */
-
-.chat-footer button,
-.sidebar-actions button {
+  border: none;
 
   background: #57b36d;
 
   color: white;
-
-  border: none;
 
   font-weight: bold;
 
@@ -711,10 +722,96 @@ footer {
 
 }
 
-.chat-footer button:hover,
-.sidebar-actions button:hover {
+.chat-footer button:hover {
 
-  background: #4aa45f;
+  background: #4ca562;
+
+}
+
+.chat-footer button:disabled {
+
+  background: #9fc8a8;
+
+  cursor: default;
+
+}
+
+/* ==========================================
+   AMIGOS
+========================================== */
+
+.friends-list {
+
+  max-height: 620px;
+
+  overflow-y: auto;
+
+}
+
+.friend {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 12px;
+
+  border-bottom: 1px solid #e5ece6;
+
+  cursor: pointer;
+
+  transition: .15s;
+
+}
+
+.friend:hover {
+
+  background: #eef7f1;
+
+}
+
+.friend.active {
+
+  background: #dfeefc;
+
+}
+
+.friend img {
+
+  width: 52px;
+  height: 52px;
+
+  border-radius: 10px;
+
+  border: 1px solid #c9d7cb;
+
+  background: white;
+
+}
+
+.friend-info {
+
+  flex: 1;
+
+}
+
+.friend strong {
+
+  display: block;
+
+  color: #2458d3;
+
+  margin-bottom: 3px;
+
+}
+
+.friend span {
+
+  color: #666;
+
+  font-size: 12px;
 
 }
 
@@ -724,27 +821,15 @@ footer {
 
 @media (max-width:900px){
 
-  .window{
+  .messages{
 
-    grid-template-columns:1fr;
-
-    height:auto;
+    height:400px;
 
   }
 
-  .chat-sidebar{
+  .friends-list{
 
-    border-right:none;
-
-    border-bottom:1px solid #c9d7cb;
-
-    max-height:260px;
-
-  }
-
-  .message{
-
-    max-width:90%;
+    max-height:250px;
 
   }
 
