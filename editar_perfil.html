@@ -1,0 +1,313 @@
+<!-- editar_perfil.html -->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+
+    Editar Perfil — Vibra™
+
+  </title>
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="./assets/Vibra_icon.png"
+  >
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
+</head>
+
+<body>
+
+  <!-- TOPO -->
+
+  <header class="top-header">
+
+    <div class="logo-area">
+
+      <img
+        src="./assets/Vibra_logo.png"
+        class="logo"
+      >
+
+    </div>
+
+    <div class="header-links">
+
+      <a href="index.html">
+
+        Home
+
+      </a>
+
+      |
+
+      <a href="sobre.html">
+
+        Sobre
+
+      </a>
+
+      |
+
+      <a href="comunidades.html">
+
+        Comunidades
+
+      </a>
+
+      |
+
+      <a href="chat.html">
+
+        Chat
+
+      </a>
+
+      |
+
+      <a href="perfil.html">
+
+        Perfil
+
+      </a>
+
+    </div>
+
+  </header>
+
+  <!-- CONTEÚDO -->
+
+  <main class="main-layout">
+
+    <section class="left-content">
+
+      <div class="box">
+
+        <div class="box-title orange">
+
+          Editar Perfil
+
+        </div>
+
+        <div class="settings-area">
+
+          <label>
+
+            Nome de usuário
+
+          </label>
+
+          <input
+            id="usernameInput"
+            type="text"
+            maxlength="30"
+          >
+
+          <label>
+
+            E-mail
+
+          </label>
+
+          <input
+            id="emailInput"
+            type="email"
+          >
+
+          <label>
+
+            Nova senha
+
+          </label>
+
+          <input
+            id="passwordInput"
+            type="password"
+            placeholder="Deixe em branco para não alterar"
+          >
+
+          <label>
+
+            Sobre mim
+
+          </label>
+
+          <textarea
+            id="aboutInput"
+            rows="8"
+            maxlength="500"
+            placeholder="Conte um pouco sobre você..."
+          ></textarea>
+
+                    <div
+            class="settings-area"
+            style="margin-top:20px;"
+          >
+
+            <button
+              id="saveProfileButton"
+            >
+
+              💾 Salvar Alterações
+
+            </button>
+
+            <button
+              id="cancelButton"
+              type="button"
+            >
+
+              Cancelar
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- LATERAL -->
+
+    <aside class="right-content">
+
+      <div class="side-box">
+
+        <h3>
+
+          Editar Perfil
+
+        </h3>
+
+        <p>
+
+          Altere suas informações pessoais.
+
+        </p>
+
+      </div>
+
+      <div class="side-box">
+
+        <h3>
+
+          Dicas
+
+        </h3>
+
+        <p>
+
+          • Escolha um nome fácil de reconhecer.
+
+        </p>
+
+        <p>
+
+          • Seu e-mail é usado para login.
+
+        </p>
+
+        <p>
+
+          • Deixe a senha em branco para mantê-la.
+
+        </p>
+
+        <p>
+
+          • O campo "Sobre mim" aparecerá em seu perfil público.
+
+        </p>
+
+      </div>
+
+      <div class="side-box">
+
+        <h3>
+
+          Navegação
+
+        </h3>
+
+        <p>
+
+          <a href="perfil.html">
+
+            👤 Voltar ao Perfil
+
+          </a>
+
+        </p>
+
+        <p>
+
+          <a href="chat.html">
+
+            💬 Vibra Messenger™
+
+          </a>
+
+        </p>
+
+        <p>
+
+          <a href="comunidades.html">
+
+            🌎 Comunidades
+
+          </a>
+
+        </p>
+
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- RODAPÉ -->
+
+  <footer>
+
+    <p>
+
+      © Retropixel™, 2025-2026.
+      Todos os direitos reservados.
+
+    </p>
+
+  </footer>
+
+  <!-- SOM -->
+
+  <audio
+    id="clickSound"
+    src="./assets/click.wav"
+    preload="auto"
+  ></audio>
+
+  <!-- SCRIPT -->
+
+  <script
+    type="module"
+    src="editar_perfil.js"
+  ></script>
+
+</body>
+</html>
