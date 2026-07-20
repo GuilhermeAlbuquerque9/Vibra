@@ -393,63 +393,67 @@ function loadMessages() {
               currentUser.uid;
 
             const div =
-              document.createElement(
-                "div"
-              );
+document.createElement("div");
 
-            div.className =
+const isMe =
+message.fromUserId === currentUser.uid;
 
-              mine ?
+div.className =
+isMe
+?
+"message me"
+:
+"message friend-message";
 
-              "message me"
+const time =
+message.createdAt?.toDate()
+.toLocaleTimeString(
+"pt-BR",
+{
+hour:"2-digit",
+minute:"2-digit"
+}
+)
+?? "";
 
-              :
+const author =
+isMe
+?
+"Você"
+:
+selectedFriendData.username;
 
-              "message friend-message";
+div.innerHTML = `
 
-            let hour = "";
+<div class="message-header">
 
-            if(message.createdAt) {
+  <span class="message-author">
 
-              hour =
+    ${author}
 
-                message.createdAt
+  </span>
 
-                .toDate()
+  <span class="message-time">
 
-                .toLocaleTimeString(
+    ${time}
 
-                  "pt-BR",
+  </span>
 
-                  {
+</div>
 
-                    hour: "2-digit",
+<div class="message-body">
 
-                    minute: "2-digit"
+  <div class="message-text">
 
-                  }
+    ${message.text}
 
-                );
+  </div>
 
-            }
+</div>
 
-            div.innerHTML = `
+`;
 
-              <div class="message-text">
-
-                ${message.text}
-
-              </div>
-
-              <div class="message-time">
-
-                ${hour}
-
-              </div>
-
-            `;
-
-            messages.appendChild(
+messages.appendChild(div);
               div
             );
 
