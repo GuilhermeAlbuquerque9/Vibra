@@ -3,148 +3,259 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Chat — Vibra™</title>
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+>
 
-<link rel="icon" href="./assets/Vibra_icon.png">
+<title>
+Vibra™ Messenger
+</title>
 
-<link rel="stylesheet" href="style.css">
+<link
+rel="icon"
+type="image/png"
+href="./assets/Vibra_icon.png"
+>
+
+<link
+rel="stylesheet"
+href="style.css"
+>
 
 </head>
 
 <body>
 
-<audio id="clickSound" src="./assets/click.wav"></audio>
+<!-- TOPO -->
 
-<div class="window">
+<header class="top-header">
 
-    <!-- ====================================== -->
-    <!-- SIDEBAR -->
-    <!-- ====================================== -->
+<div class="logo-area">
 
-    <aside class="chat-sidebar">
-
-        <div class="sidebar-header">
-
-            <img
-                src="./assets/Vibra_logo.png"
-                alt="Vibra™"
-                class="sidebar-logo">
-
-            <h2>Conversas</h2>
-
-        </div>
-
-        <div class="sidebar-actions">
-
-            <button
-                id="backButton">
-
-                ← Voltar
-
-            </button>
-
-        </div>
-
-        <div class="friends-title">
-
-            👥 Amigos
-
-        </div>
-
-        <div
-            id="friendsList"
-            class="friends-list">
-
-            <!-- chat.js -->
-
-        </div>
-
-    </aside>
-
-    <!-- ====================================== -->
-    <!-- CHAT -->
-    <!-- ====================================== -->
-
-    <main class="chat-main">
-
-        <header class="chat-header">
-
-            <div class="chat-user">
-
-                <img
-                    id="chatAvatar"
-                    src="./assets/avatar.png"
-                    alt="Avatar">
-
-                <div>
-
-                    <h2
-                        id="chatUsername">
-
-                        Selecione um amigo
-
-                    </h2>
-
-                    <span
-                        id="chatStatus">
-
-                        Offline
-
-                    </span>
-
-                </div>
-
-            </div>
-
-        </header>
-
-        <section
-            id="messages"
-            class="messages">
-
-            <div class="empty-chat">
-
-                Selecione um amigo para começar a conversar.
-
-            </div>
-
-        </section>
-
-        <footer class="chat-footer">
-
-            <input
-
-                type="text"
-
-                id="messageInput"
-
-                placeholder="Digite uma mensagem..."
-
-                autocomplete="off"
-
-                disabled
-
-            >
-
-            <button
-                id="sendButton"
-                disabled>
-
-                Enviar
-
-            </button>
-
-        </footer>
-
-    </main>
+<img
+src="./assets/Vibra_logo.png"
+class="logo"
+alt="Vibra Logo"
+>
 
 </div>
 
+<div class="search-area">
+
+<span>
+Pesquisar usuários:
+</span>
+
+<input
+type="text"
+placeholder="Digite um usuário..."
+id="searchInput"
+>
+
+<button id="searchButton">
+Pesquisar
+</button>
+
+</div>
+
+<div class="header-links">
+
+<a href="index.html">Home</a>
+
+|
+
+<a href="sobre.html">Sobre</a>
+
+|
+
+<a href="comunidades.html">Comunidades</a>
+
+|
+
+<a href="chat.html">Chat</a>
+
+|
+
+<a href="perfil.html">Perfil</a>
+
+</div>
+
+</header>
+
+<!-- MENU -->
+
+<nav class="navbar">
+
+<a href="index.html">
+Página Inicial
+</a>
+
+<a href="perfil.html">
+Meu Perfil
+</a>
+
+<a href="comunidades.html">
+Comunidades
+</a>
+
+<a href="chat.html">
+Messenger
+</a>
+
+</nav>
+
+<!-- CONTEÚDO -->
+
+<main class="main-layout">
+
+<!-- CONVERSA -->
+
+<section class="left-content">
+
+<div class="box">
+
+<div class="box-title blue">
+
+Vibra Messenger™
+
+</div>
+
+<div class="chat-header">
+
+<div class="chat-user">
+
+<img
+id="chatAvatar"
+src="./assets/avatar.png"
+alt="Avatar"
+>
+
+<div>
+
+<h2 id="chatUsername">
+
+Selecione um amigo
+
+</h2>
+
+<span id="chatStatus">
+
+Nenhuma conversa aberta
+
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+<div
+id="messages"
+class="messages"
+>
+
+<div class="empty-chat">
+
+Selecione um amigo para começar a conversar.
+
+</div>
+
+</div>
+
+<div class="chat-footer">
+
+<input
+type="text"
+id="messageInput"
+placeholder="Digite uma mensagem..."
+disabled
+>
+
+<button
+id="sendButton"
+disabled
+>
+
+Enviar
+
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- CONTATOS -->
+
+<aside class="right-content">
+
+  <div class="box">
+
+    <div class="box-title green">
+
+      Amigos
+
+    </div>
+
+    <div
+      id="friendsList"
+      class="friends-list"
+    >
+
+      <div class="friend">
+
+        Carregando amigos...
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="side-box">
+
+    <h3>
+      Vibra Messenger™
+    </h3>
+
+    <p>
+
+      Selecione um amigo na lista ao lado para iniciar uma conversa em tempo real.
+
+    </p>
+
+    <br>
+
+    <p>
+
+      As mensagens aparecem automaticamente para ambos os usuários.
+
+    </p>
+
+  </div>
+
+</aside>
+
+</main>
+
+<!-- SONS -->
+
+<audio
+  id="clickSound"
+  src="./assets/click.wav"
+  preload="auto"
+></audio>
+
+<!-- SCRIPT -->
+
 <script
-type="module"
-src="chat.js"></script>
+  type="module"
+  src="chat.js"
+></script>
 
 </body>
 </html>
