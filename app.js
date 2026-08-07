@@ -1,6 +1,9 @@
 // app.js — Vibra™
 
-import { auth, db }
+import {
+  auth,
+  db
+}
 from "./firebase.js";
 
 import {
@@ -28,7 +31,8 @@ import {
   setDoc,
   serverTimestamp,
   arrayUnion,
-  arrayRemove
+  arrayRemove,
+  limit
 
 }
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
@@ -40,44 +44,68 @@ from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 const $ = (id) =>
   document.getElementById(id);
 
-const email = $("email");
-const password = $("password");
-const username = $("username");
+const email =
+  $("email");
 
-const loginButton = $("loginButton");
-const registerButton = $("registerButton");
-const logoutButton = $("logoutButton");
+const password =
+  $("password");
 
-const postInput = $("postInput");
-const postButton = $("postButton");
+const username =
+  $("username");
 
-const postsContainer = $("postsContainer");
-const communityContainer = $("communityContainer");
+const loginButton =
+  $("loginButton");
 
-const onlineCounter = $("onlineCounter");
-const visitCounter = $("visitCounter");
+const registerButton =
+  $("registerButton");
 
-const searchInput = $("searchInput");
-const searchButton = $("searchButton");
+const logoutButton =
+  $("logoutButton");
 
-const clickSound = $("clickSound");
+const postsContainer =
+  $("postsContainer");
+
+const communityContainer =
+  $("communityContainer");
+
+const onlineCounter =
+  $("onlineCounter");
+
+const visitCounter =
+  $("visitCounter");
+
+const searchInput =
+  $("searchInput");
+
+const searchButton =
+  $("searchButton");
+
+const feedButton =
+  $("feedButton");
+
+const clickSound =
+  $("clickSound");
 
 // ========================================
 // VARIÁVEIS
 // ========================================
 
 let currentUser = null;
-let currentUsername = "Usuário";
+
+let currentUsername =
+  "Usuário";
 
 // ========================================
 // SOM
 // ========================================
 
-function playClick() {
+function playClick(){
 
-  if(!clickSound) return;
+  if(!clickSound)
+    return;
 
   clickSound.currentTime = 0;
+
   clickSound.play();
 
 }
@@ -86,9 +114,9 @@ document.addEventListener(
 
   "click",
 
-  (e) => {
+  (event)=>{
 
-    if(e.target.tagName === "BUTTON") {
+    if(event.target.tagName==="BUTTON"){
 
       playClick();
 
@@ -102,43 +130,59 @@ document.addEventListener(
 // VISITAS
 // ========================================
 
-async function registerVisit() {
+async function registerVisit(){
 
   const ref =
-    doc(db, "site", "visits");
+
+    doc(
+      db,
+      "site",
+      "visits"
+    );
 
   const snap =
     await getDoc(ref);
 
-  if(!snap.exists()) {
+  if(!snap.exists()){
 
-    await setDoc(ref, {
+    await setDoc(
 
-      count: 1
+      ref,
 
-    });
+      {
+
+        count:1
+
+      }
+
+    );
 
   }
 
-  else {
+  else{
 
-    await updateDoc(ref, {
+    await updateDoc(
 
-      count:
-        increment(1)
+      ref,
 
-    });
+      {
+
+        count:
+          increment(1)
+
+      }
+
+    );
 
   }
 
   const updated =
+
     await getDoc(ref);
 
   visitCounter.innerText =
 
-    `👁️ ${
-      updated.data().count
-    } visitas`;
+    `👁️ ${updated.data().count} visitas`;
 
 }
 
@@ -148,28 +192,37 @@ registerVisit();
 // CADASTRO
 // ========================================
 
-registerButton.onclick = async () => {
+registerButton.onclick =
+async ()=>{
 
   if(
-    !username.value ||
-    !email.value ||
-    !password.value
-  ) {
 
-    return alert(
-      "Preencha tudo!"
+    !username.value ||
+
+    !email.value ||
+
+    !password.value
+
+  ){
+
+    alert(
+      "Preencha todos os campos."
     );
+
+    return;
 
   }
 
-  try {
+  try{
 
     const cred =
 
       await createUserWithEmailAndPassword(
 
         auth,
+
         email.value,
+
         password.value
 
       );
@@ -196,7 +249,11 @@ registerButton.onclick = async () => {
         email:
           email.value,
 
-        active: true,
+        about:"",
+        humor:"",
+        interests:"",
+
+        active:true,
 
         createdAt:
           serverTimestamp()
@@ -209,14 +266,16 @@ registerButton.onclick = async () => {
       finalUsername;
 
     alert(
-      "Conta criada!"
+      "Conta criada com sucesso!"
     );
 
   }
 
-  catch(err) {
+  catch(err){
 
-    alert(err.message);
+    alert(
+      err.message
+    );
 
   }
 
@@ -226,23 +285,28 @@ registerButton.onclick = async () => {
 // LOGIN
 // ========================================
 
-loginButton.onclick = async () => {
+loginButton.onclick =
+async ()=>{
 
-  try {
+  try{
 
     await signInWithEmailAndPassword(
 
       auth,
+
       email.value,
+
       password.value
 
     );
 
   }
 
-  catch(err) {
+  catch(err){
 
-    alert(err.message);
+    alert(
+      err.message
+    );
 
   }
 
@@ -252,9 +316,10 @@ loginButton.onclick = async () => {
 // LOGOUT
 // ========================================
 
-logoutButton.onclick = async () => {
+logoutButton.onclick =
+async ()=>{
 
-  if(currentUser) {
+  if(currentUser){
 
     await updateDoc(
 
@@ -266,7 +331,7 @@ logoutButton.onclick = async () => {
 
       {
 
-        active: false
+        active:false
 
       }
 
@@ -279,6 +344,23 @@ logoutButton.onclick = async () => {
 };
 
 // ========================================
+// BOTÃO FEED
+// ========================================
+
+if(feedButton){
+
+  feedButton.onclick = ()=>{
+
+    playClick();
+
+    location.href =
+      "feed.html";
+
+  };
+
+}
+
+// ========================================
 // AUTH
 // ========================================
 
@@ -286,12 +368,14 @@ onAuthStateChanged(
 
   auth,
 
-  async (user) => {
+  async(user)=>{
 
-    if(!user) {
+    if(!user){
 
       currentUser = null;
-      currentUsername = "Usuário";
+
+      currentUsername =
+        "Usuário";
 
       return;
 
@@ -299,19 +383,21 @@ onAuthStateChanged(
 
     currentUser = user;
 
-    const ref =
+    const userRef =
+
       doc(
         db,
         "users",
         user.uid
       );
 
-    const snap =
-      await getDoc(ref);
+    const userSnap =
 
-    // CASO O USUÁRIO NÃO EXISTA
+      await getDoc(
+        userRef
+      );
 
-    if(!snap.exists()) {
+    if(!userSnap.exists()){
 
       const finalUsername =
 
@@ -319,30 +405,40 @@ onAuthStateChanged(
 
         user.email.split("@")[0];
 
-      await setDoc(ref, {
+      await setDoc(
 
-        username:
-          finalUsername,
+        userRef,
 
-        email:
-          user.email,
+        {
 
-        active: true,
+          username:
+            finalUsername,
 
-        createdAt:
-          serverTimestamp()
+          email:
+            user.email,
 
-      });
+          about:"",
+          humor:"",
+          interests:"",
+
+          active:true,
+
+          createdAt:
+            serverTimestamp()
+
+        }
+
+      );
 
       currentUsername =
         finalUsername;
 
     }
 
-    else {
+    else{
 
       const data =
-        snap.data();
+        userSnap.data();
 
       currentUsername =
 
@@ -352,11 +448,17 @@ onAuthStateChanged(
 
         "Usuário";
 
-      await updateDoc(ref, {
+      await updateDoc(
 
-        active: true
+        userRef,
 
-      });
+        {
+
+          active:true
+
+        }
+
+      );
 
     }
 
@@ -370,17 +472,20 @@ onAuthStateChanged(
 
 onSnapshot(
 
-  collection(db, "users"),
+  collection(
+    db,
+    "users"
+  ),
 
-  (snapshot) => {
+  (snapshot)=>{
 
     let online = 0;
 
     snapshot.forEach(
 
-      (u) => {
+      (userDoc)=>{
 
-        if(u.data().active) {
+        if(userDoc.data().active){
 
           online++;
 
@@ -399,121 +504,68 @@ onSnapshot(
 );
 
 // ========================================
-// PUBLICAR POST
-// ========================================
-
-postButton.onclick = async () => {
-
-  if(!currentUser) {
-
-    return alert(
-      "Faça login!"
-    );
-
-  }
-
-  if(!postInput.value) return;
-
-  await addDoc(
-
-    collection(db, "posts"),
-
-    {
-
-      username:
-
-        currentUsername ||
-
-        username.value ||
-
-        currentUser.email.split("@")[0] ||
-
-        "Usuário",
-
-      userId:
-        currentUser.uid,
-
-      text:
-        postInput.value,
-
-      likes: 0,
-      dislikes: 0,
-
-      likedBy: [],
-      dislikedBy: [],
-
-      comments: [],
-
-      createdAt:
-        serverTimestamp()
-
-    }
-
-  );
-
-  postInput.value = "";
-
-};
-
-// ========================================
-// POSTS
+// AMOSTRA DO FEED
+// Apenas 5 posts
 // ========================================
 
 onSnapshot(
 
   query(
 
-    collection(db, "posts"),
+    collection(
+      db,
+      "posts"
+    ),
 
     orderBy(
       "createdAt",
       "desc"
-    )
+    ),
+
+    limit(5)
 
   ),
 
-  (snapshot) => {
+  (snapshot)=>{
 
     postsContainer.innerHTML = "";
 
+    if(snapshot.empty){
+
+      postsContainer.innerHTML = `
+
+        <div class="community">
+
+          Nenhuma postagem ainda.
+
+        </div>
+
+      `;
+
+      return;
+
+    }
+
     snapshot.forEach(
 
-      (postDoc) => {
+      (postDoc)=>{
 
         const post =
           postDoc.data();
 
-        const id =
-          postDoc.id;
-
-        const liked =
-
-          post.likedBy
-          ?.includes(
-            currentUser?.uid
-          );
-
-        const disliked =
-
-          post.dislikedBy
-          ?.includes(
-            currentUser?.uid
-          );
-
         const div =
-          document.createElement("div");
+          document.createElement(
+            "div"
+          );
 
-        div.className = "post";
+        div.className =
+          "post";
 
         div.innerHTML = `
 
           <h3>
 
-            ${
-              post.username ||
-
-              "Usuário"
-            }
+            ${post.username || "Usuário"}
 
           </h3>
 
@@ -523,283 +575,11 @@ onSnapshot(
 
           </p>
 
-          <div class="post-buttons">
-
-            <button class="like">
-
-              👍 ${post.likes || 0}
-
-            </button>
-
-            <button class="dislike">
-
-              👎 ${post.dislikes || 0}
-
-            </button>
-
-            <button class="comment">
-
-              💬 Comentar
-
-            </button>
-
-            <button class="hide">
-
-              🚫 Ocultar
-
-            </button>
-
-            ${
-              currentUser?.uid ===
-              post.userId
-
-              ?
-
-              `
-              <button class="delete">
-
-                🗑️ Excluir
-
-              </button>
-              `
-
-              :
-
-              ""
-
-            }
-
-          </div>
-
-          <div class="comments">
-
-            ${
-              (post.comments || [])
-
-              .map(
-
-                c => `
-
-                <div class="community">
-
-                  <strong>
-
-                    ${
-                      c.username ||
-                      "Usuário"
-                    }
-
-                  </strong>
-
-                  <br>
-
-                  ${c.text}
-
-                </div>
-
-              `
-
-              )
-
-              .join("")
-
-            }
-
-          </div>
-
         `;
 
-        // ========================================
-        // LIKE
-        // ========================================
-
-        div.querySelector(".like")
-
-        .onclick = async () => {
-
-          if(!currentUser) return;
-
-          await updateDoc(
-
-            doc(db, "posts", id),
-
-            liked
-
-            ?
-
-            {
-
-              likes:
-                increment(-1),
-
-              likedBy:
-                arrayRemove(
-                  currentUser.uid
-                )
-
-            }
-
-            :
-
-            {
-
-              likes:
-                increment(1),
-
-              likedBy:
-                arrayUnion(
-                  currentUser.uid
-                )
-
-            }
-
-          );
-
-        };
-
-        // ========================================
-        // DISLIKE
-        // ========================================
-
-        div.querySelector(".dislike")
-
-        .onclick = async () => {
-
-          if(!currentUser) return;
-
-          await updateDoc(
-
-            doc(db, "posts", id),
-
-            disliked
-
-            ?
-
-            {
-
-              dislikes:
-                increment(-1),
-
-              dislikedBy:
-                arrayRemove(
-                  currentUser.uid
-                )
-
-            }
-
-            :
-
-            {
-
-              dislikes:
-                increment(1),
-
-              dislikedBy:
-                arrayUnion(
-                  currentUser.uid
-                )
-
-            }
-
-          );
-
-        };
-
-        // ========================================
-        // COMENTAR
-        // ========================================
-
-        div.querySelector(".comment")
-
-        .onclick = async () => {
-
-          if(!currentUser) return;
-
-          const text =
-            prompt(
-              "Comentário:"
-            );
-
-          if(!text) return;
-
-          await updateDoc(
-
-            doc(db, "posts", id),
-
-            {
-
-              comments:
-                arrayUnion({
-
-                  username:
-
-                    currentUsername ||
-
-                    username.value ||
-
-                    currentUser.email.split("@")[0] ||
-
-                    "Usuário",
-
-                  text
-
-                })
-
-            }
-
-          );
-
-        };
-
-        // ========================================
-        // OCULTAR
-        // ========================================
-
-        div.querySelector(".hide")
-
-        .onclick = () => {
-
-          div.remove();
-
-        };
-
-        // ========================================
-        // EXCLUIR
-        // ========================================
-
-        const del =
-          div.querySelector(".delete");
-
-        if(del) {
-
-          del.onclick = async () => {
-
-            if(
-
-              confirm(
-                "Excluir post?"
-              )
-
-            ) {
-
-              await deleteDoc(
-
-                doc(
-                  db,
-                  "posts",
-                  id
-                )
-
-              );
-
-            }
-
-          };
-
-        }
-
-        postsContainer
-        .appendChild(div);
+        postsContainer.appendChild(
+          div
+        );
 
       }
 
@@ -815,39 +595,61 @@ onSnapshot(
 
 onSnapshot(
 
-  collection(db, "communities"),
+  collection(
+    db,
+    "communities"
+  ),
 
-  (snapshot) => {
+  (snapshot)=>{
 
-    communityContainer.innerHTML =
+    communityContainer.innerHTML = "";
 
-      snapshot.empty
+    if(snapshot.empty){
 
-      ?
+      communityContainer.innerHTML = `
 
-      `
-      <div class="community">
-        Nenhuma comunidade ainda.
-      </div>
-      `
+        <div class="community">
 
-      :
+          Nenhuma comunidade criada.
 
-      "";
+        </div>
+
+      `;
+
+      return;
+
+    }
 
     snapshot.forEach(
 
-      (c) => {
+      (communityDoc)=>{
 
-        communityContainer.innerHTML += `
+        const community =
+          communityDoc.data();
 
-          <div class="community">
+        const div =
+          document.createElement(
+            "div"
+          );
 
-            🌎 ${c.data().name}
+        div.className =
+          "community";
 
-          </div>
+        div.innerHTML = `
+
+          🌎
+
+          <strong>
+
+            ${community.name}
+
+          </strong>
 
         `;
+
+        communityContainer.appendChild(
+          div
+        );
 
       }
 
@@ -861,17 +663,64 @@ onSnapshot(
 // BUSCA
 // ========================================
 
-searchButton.onclick = () => {
+searchButton.onclick = ()=>{
 
-  if(!searchInput.value)
+  playClick();
+
+  if(!searchInput.value.trim()){
+
     return;
+
+  }
 
   location.href =
 
-    `buscar.html?q=${
-      encodeURIComponent(
-        searchInput.value
-      )
-    }`;
+    `buscar.html?q=${encodeURIComponent(
+
+      searchInput.value
+
+    )}`;
 
 };
+
+// ========================================
+// ENTER NA BUSCA
+// ========================================
+
+searchInput.addEventListener(
+
+  "keydown",
+
+  (event)=>{
+
+    if(event.key==="Enter"){
+
+      searchButton.click();
+
+    }
+
+  }
+
+);
+
+// ========================================
+// AVISO AO SAIR DA PÁGINA
+// ========================================
+
+window.addEventListener(
+
+  "beforeunload",
+
+  (event)=>{
+
+    if(auth.currentUser){
+
+      event.preventDefault();
+
+      event.returnValue = "";
+
+    }
+
+  }
+
+);
