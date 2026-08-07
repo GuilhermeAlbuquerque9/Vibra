@@ -1,0 +1,368 @@
+<!-- feed.html -->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+
+    Feed — Vibra™
+
+  </title>
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="./assets/Vibra_icon.png"
+  >
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
+</head>
+
+<body>
+
+  <!-- TOPO -->
+
+  <header class="top-header">
+
+    <div class="logo-area">
+
+      <img
+        src="./assets/Vibra_logo.png"
+        alt="Vibra™"
+        class="logo"
+      >
+
+    </div>
+
+    <!-- PESQUISA -->
+
+    <div class="search-area">
+
+      <span>
+
+        Pesquisar usuários:
+
+      </span>
+
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Digite um usuário..."
+      >
+
+      <button
+        id="searchButton"
+      >
+
+        Pesquisar
+
+      </button>
+
+    </div>
+
+    <!-- LINKS -->
+
+    <div class="header-links">
+
+      <a href="index.html">
+
+        Home
+
+      </a>
+
+      |
+
+      <a href="feed.html">
+
+        Feed
+
+      </a>
+
+      |
+
+      <a href="comunidades.html">
+
+        Comunidades
+
+      </a>
+
+      |
+
+      <a href="chat.html">
+
+        Chat
+
+      </a>
+
+      |
+
+      <a href="perfil.html">
+
+        Perfil
+
+      </a>
+
+    </div>
+
+  </header>
+
+  <!-- CONTEÚDO -->
+
+  <main class="main-layout">
+
+    <!-- ESQUERDA -->
+
+    <section class="left-content">
+
+      <!-- BANNER -->
+
+      <div class="welcome-banner">
+
+        <h1>
+
+          Feed do Vibra™
+
+        </h1>
+
+        <p>
+
+          Compartilhe novidades,
+          publique fotos,
+          converse com seus amigos
+          e acompanhe tudo em tempo real.
+
+        </p>
+
+      </div>
+
+      <!-- NOVA POSTAGEM -->
+
+      <div class="box">
+
+        <div class="box-title orange">
+
+          Nova postagem
+
+        </div>
+
+        <div class="create-post">
+
+          <textarea
+
+            id="postInput"
+
+            placeholder="O que você está pensando?"
+
+          ></textarea>
+
+          <button
+            id="postButton"
+          >
+
+            Publicar
+
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- FEED -->
+
+      <div class="box">
+
+        <div class="box-title orange">
+
+          Feed Vibra™
+
+        </div>
+
+        <div
+          id="postsContainer"
+        >
+
+          <div class="community">
+
+            Carregando postagens...
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- DIREITA -->
+
+    <aside class="right-content">
+
+      <div class="side-box">
+
+        <h3>
+
+          Feed Vibra™
+
+        </h3>
+
+        <p>
+
+          Veja todas as postagens
+          mais recentes da comunidade.
+
+        </p>
+
+      </div>
+
+      <div class="side-box">
+
+        <h3>
+
+          Dicas
+
+        </h3>
+
+        <p>
+
+          ✔ Compartilhe novidades.
+
+        </p>
+
+        <p>
+
+          ✔ Respeite os outros usuários.
+
+        </p>
+
+        <p>
+
+          ✔ Utilize o botão Curtir
+          para apoiar boas postagens.
+
+        </p>
+
+      </div>
+
+            <div class="side-box">
+
+        <h3>
+
+          Atalhos
+
+        </h3>
+
+        <p>
+
+          <a href="perfil.html">
+
+            👤 Meu perfil
+
+          </a>
+
+        </p>
+
+        <p>
+
+          <a href="chat.html">
+
+            💬 Chat
+
+          </a>
+
+        </p>
+
+        <p>
+
+          <a href="comunidades.html">
+
+            🌎 Comunidades
+
+          </a>
+
+        </p>
+
+      </div>
+
+      <div class="side-box">
+
+        <h3>
+
+          Vibra™
+
+        </h3>
+
+        <p>
+
+          Onde você pode se expressar.
+
+        </p>
+
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- RODAPÉ -->
+
+  <footer>
+
+    <div class="footer-grid">
+
+      <div class="footer-card">
+
+        Rede Social Retrô
+
+      </div>
+
+      <div class="footer-card">
+
+        Personalização
+
+      </div>
+
+      <div class="footer-card">
+
+        Comunidades
+
+      </div>
+
+      <div class="footer-card">
+
+        Vibra Messenger™
+
+      </div>
+
+    </div>
+
+  </footer>
+
+  <!-- SOM -->
+
+  <audio
+    id="clickSound"
+    src="./assets/click.wav"
+    preload="auto"
+  ></audio>
+
+  <!-- SCRIPT -->
+
+  <script
+    type="module"
+    src="feed.js"
+  ></script>
+
+</body>
+</html>
